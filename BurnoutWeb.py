@@ -1,3 +1,5 @@
+import re
+
 import dash
 from dash.dependencies import Input, Output,State
 import dash_table
@@ -6,10 +8,11 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 import query
 import pandas as pd
+import Clasificacion
 
 navbar = dbc.NavbarSimple(
     children=[
-        #dbc.NavItem(dbc.NavLink("Download", href="http://127.0.0.1:8050/")),
+        dbc.NavItem(dbc.NavLink("Sistema de Detección", href="/deteccion")),
         dbc.DropdownMenu(
             nav=True,
             in_navbar=True,
@@ -25,12 +28,18 @@ navbar = dbc.NavbarSimple(
                 dbc.DropdownMenuItem(divider=True),
                 dbc.DropdownMenuItem("Burnout por Sexo", href="/sexo"),
             ],
+
         ),
+        dbc.NavItem(dbc.NavLink("Descargar los Datos", href="https://storage.googleapis.com/burnout/Burnout_Data.csv"))
     ],
-    brand="Burnout Data Website",
+    brand="Burnout",
+    #brand_external_link='https://storage.cloud.google.com/burnout/Burnout.png'
+    #src='data:image/png;base64,{}'.format(encoded_image),
     brand_href="http://127.0.0.1:8050/",
     sticky="top",
+
 )
+
 colors = {
     'background': '#111111',
     'text': '#7FDBFF'
@@ -290,6 +299,145 @@ BurnoutXSexo = dbc.Container(
     ],
     className="mt-4",
 )
+
+SistemaDeDeteccion = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H2("Sistema de Detección"),
+                        dbc.FormGroup(
+                            [
+                                dbc.Label("Nombre"),
+                                dbc.Input(id="nombre", type="text", value=""),
+                                dbc.Label("Email"),
+                                dbc.Input(id="email-input", type="email", value=""),
+                                dbc.FormFeedback(
+                                    "That looks like a gmail address :-)", valid=True
+                                ),
+                                dbc.FormFeedback(
+                                    "Sorry, we only accept gmail for some reason...",
+                                    valid=False,
+                                ),
+                                dbc.Label("Sexo", html_for="example-radios-row", width=4),
+                                dbc.Col(
+                                    dbc.RadioItems(
+                                        id="Sexo",
+                                        options=[
+                                            {"label": "Hombre", "value": "hombre"},
+                                            {"label": "Mujer", "value": "mujer"},
+                                        ],
+                                    ),
+                                    width=10,
+                                ),
+                                dbc.Label("Edad"),
+                                dbc.Input(id="edad", type="int", value=""),
+                                dbc.FormFeedback(
+                                    "OK EDAD:-)", valid=True
+                                ),
+                                dbc.FormFeedback(
+                                    "MAL",
+                                    valid=False,
+                                ),
+                                dbc.Label("Peso"),
+                                dbc.Input(id="peso", type="int", value=""),
+                                dbc.FormFeedback(
+                                    "OK Peso:-)", valid=True
+                                ),
+                                dbc.FormFeedback(
+                                    "MAL Peso",
+                                    valid=False,
+                                ),
+                                dbc.Label("Numero de Hijos"),
+                                dbc.Input(id="hijos", type="int", value=""),
+
+                                dbc.Label("Estado Civil", html_for="dropdown"), #EstadoCivil
+                                dcc.Dropdown(id="EstadoCivil",options=[
+                                        {"label": "Soltero", "value": "soltero"},
+                                        {"label": "Casado", "value": "casado"},
+                                        {"label": "Divorciado", "value": "divorciado"},
+                                    ],
+                                ),
+
+                                dbc.Label("Contrato de Trabajo Actual", html_for="dropdown"), #Contrato_Adjunto
+                                dcc.Dropdown(id="Contrato_Adjunto",options=[
+                                        {"label": "fijo", "value": 1},
+                                        {"label": "eventual", "value": 2},
+                                        {"label": "interino", "value": 3},
+                                        {"label": "N/A", "value": 4},
+                                    ],
+                                ),
+
+                               dbc.Label("Frecuencia de Musica", html_for="dropdown"), #Musica
+                                dcc.Dropdown(id="Musica",options=[
+                                        {"label": "Habitualmente", "value": "habitualmente"},
+                                        {"label": "Ocasionalmente", "value": "ocasionalmente"},
+                                        {"label": "Nunca", "value": "nunca"},
+                                    ],
+                                ),
+                                dbc.Label("Frecuencia de Estudio", html_for="dropdown"), #Estudio
+                                dcc.Dropdown(id="Estudio",options=[
+                                        {"label": "Habitualmente", "value": "habitualmente"},
+                                        {"label": "Ocasionalmente", "value": "ocasionalmente"},
+                                        {"label": "Nunca", "value": "nunca"},
+                                    ],
+                                ),
+
+                                dbc.Label("Frecuencia de Salida Socialmente", html_for="dropdown"), #Sales_Social
+                                dcc.Dropdown(id="Sales_Social",options=[
+                                        {"label": "Habitualmente", "value": "habitualmente"},
+                                        {"label": "Ocasionalmente", "value": "ocasionalmente"},
+                                        {"label": "Nunca", "value": "nunca"},
+                                    ],
+                                ),
+
+                                dbc.Label("Frecuencia de Lectura", html_for="dropdown"), #Lectura
+                                dcc.Dropdown(id="Lectura",options=[
+                                        {"label": "Habitualmente", "value": "habitualmente"},
+                                        {"label": "Ocasionalmente", "value": "ocasionalmente"},
+                                        {"label": "Nunca", "value": "nunca"},
+                                    ],
+                                ),
+
+                                dbc.Label("Frecuencia Cardiaca por Minuto"),#Frecuencia_Cardiaca_Minuto
+                                dbc.Input(id="Frecuencia_Cardiaca_Minuto", type="int", value=""),
+
+                                dbc.Label("Frecuencia Cardiaca en Descanso por Minuto"),#Resting_HeartRate
+                                dbc.Input(id="Resting_HeartRate", type="int", value=""),
+
+                                dbc.Label("Calorias quemadas al día"),#Calorias
+                                dbc.Input(id="Calorias", type="int", value=""),
+
+                                dbc.Label("Tiempo en años en el Trabajo Actual"),#Tiempo_PlazaActual
+                                dbc.Input(id="Tiempo_PlazaActual", type="int", value=""),
+
+                                dbc.Label("Horas al Mes que se dedican a Salidas Sociales"),#Hora_Social
+                                dbc.Input(id="Hora_Social", type="int", value=""),
+
+                                dbc.Label("Horas al Mes que se dedican a Cuidados Personales"),#Horas_Cuidados
+                                dbc.Input(id="Horas_Cuidados", type="int", value=""),
+
+                                dbc.Label("Años de Vida Laboral"),#Tiempo_Vida_Laboral
+                                dbc.Input(id="Tiempo_Vida_Laboral", type="int", value=""),
+
+                                dbc.Label("Horas de Sueño al día"),#Minutos_Dormido
+                                dbc.Input(id="Minutos_Dormido", type="int", value=""),
+
+                                html.Button(id='submit-button', type='submit', children='Submit'),
+                                html.Div(id='output_div')
+                            ]
+                        )
+                    ],
+                    md=12,
+                ),
+
+            ]
+        )
+    ],
+    className="mt-4",
+)
+
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.config.suppress_callback_exceptions = True
 app.layout = html.Div([
@@ -419,7 +567,7 @@ page_3_layout = html.Div([navbar,SubescalasIndividuales])
 page_4_layout = html.Div([navbar,BurnoutXEspecialidad])
 page_5_layout = html.Div([navbar,BurnoutXSexo])
 page_6_layout = html.Div([navbar,FisiologicosXPaciente])
-
+page_7_layout = html.Div([navbar,SistemaDeDeteccion])
 @app.callback(dash.dependencies.Output('page-content', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_page(pathname):
@@ -435,6 +583,8 @@ def display_page(pathname):
         return page_5_layout
     if pathname == '/paciente':
         return page_6_layout
+    if pathname == '/deteccion':
+        return page_7_layout
     else:
         return index_page
 
@@ -1381,10 +1531,50 @@ def toggle_collapse(n, is_open):
     [Input("collapse-button2", "n_clicks")],
     [State("collapse2", "is_open")],
 )
+
+@app.callback(
+    [Output("email-input", "valid"), Output("email-input", "invalid")],
+    [Input("email-input", "value")],
+)
+
+def check_validity(text):
+    if text:
+        is_gmail = text.endswith("@gmail.com") or text.endswith("@hotmail.com") or text.endswith("@yahoo.com")
+        return is_gmail, not is_gmail
+    return False, False
+
+@app.callback(
+    [Output("edad", "valid"), Output("edad", "invalid")],
+    [Input("edad", "value")],
+)
+
+def check_edad(edad):
+    if edad:
+        is_gmail = bool(re.match("^[0-9 \-]+$", edad))
+        return is_gmail, not is_gmail
+    return False, False
+
 def toggle_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
+
+@app.callback(Output('output_div', 'children'),
+                  [Input('submit-button', 'n_clicks')],
+                  [State('nombre', 'value'),State('email-input', 'value'),State('Sexo', 'value'),State('edad', 'value'),State('peso', 'value'),
+                   State('hijos', 'value'),State('EstadoCivil', 'value'),State('Contrato_Adjunto', 'value'),State('Musica', 'value'),
+                   State('Estudio', 'value'),State('Sales_Social', 'value'),State('Lectura', 'value'),State('Frecuencia_Cardiaca_Minuto', 'value'),
+                   State('Resting_HeartRate', 'value'),State('Calorias', 'value'),State('Tiempo_PlazaActual', 'value'),State('Hora_Social', 'value'),
+                   State('Horas_Cuidados', 'value'),State('Tiempo_Vida_Laboral', 'value'),State('Minutos_Dormido', 'value')
+                   ]
+
+              )
+def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Frecuencia_Cardiaca_Minuto,Resting_HeartRate,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Minutos_Dormido):
+    if clicks is not None:
+        print(nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Frecuencia_Cardiaca_Minuto,Resting_HeartRate,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Minutos_Dormido)
+        df = pd.DataFrame({'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)], 'Hijos': [float(hijos)], 'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica], 'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura], 'Frecuencia_Cardiaca_Minuto': [float(Frecuencia_Cardiaca_Minuto)], 'Resting_HeartRate': [float(Resting_HeartRate)], 'Calorias': [float(Calorias)], 'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)], 'Horas_Cuidados': [float(Horas_Cuidados)], 'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Minutos_Dormido': [float(Minutos_Dormido)], 'Estado_Animo': [''], 'Cantidad_Sueno_Profundo': [2]})
+        data=Clasificacion.DataPreparation(df)
+        Clasificacion.LinearEvaluation(data)
 
 if __name__ == "__main__":
     app.run_server()

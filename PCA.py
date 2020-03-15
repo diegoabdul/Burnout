@@ -1,69 +1,75 @@
+from boto import sns
+from plotly.plotly import plotly
 from pyspark.sql import SparkSession
 from pyspark.sql import SQLContext
 from pyspark import SparkContext
-from pyspark.ml.feature import PCA, VectorAssembler
-from pyspark.mllib.linalg import Vectors
-from pyspark.ml import Pipeline
-from pyspark.sql import SQLContext
-from pyspark import SparkContext
-from pyspark.mllib.feature import Normalizer
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.stats import kde
 
 sc =SparkContext()
 sqlContext = SQLContext(sc)
 
-spark = SparkSession.builder.appName('SistemaDeDeteccion').getOrCreate()
-df = spark.read.csv('Burnout_Data.csv', header = True, inferSchema = True)
-df = df.select('Burnout_Antes','Ejercicio_Fisico','Frecuencia_Cardiaca_Minuto')
-cols = df.columns
-# df.printSchema()
-#
+spark = SparkSession.builder.master("local[*]").getOrCreate()
+data = spark.read.csv('Burnout_Data.csv', header = True, inferSchema = True)
+data = data.drop('Email')
+data = data.drop('Password')
+data = data.drop('Comentarios2')
+data = data.drop('Comentarios')
+data = data.drop('Estado_Animo')
+data = data.drop('Minutos_Sueno_Profundo')
+data = data.drop('Minutos_Sueno_Ligero')
+data = data.drop('Minutos_Rem')
+data = data.drop('Minutos_Sueno_Wake')
+data = data.drop('Minutos_Dormido')
+data = data.drop('Minutos_Despierto_enCama')
+data = data.drop('Minutos_paraDormir')
+data = data.drop('Tiempo_enCama')
+#data = data.select('Identificador','Frecuencia_Cardiaca_Minuto','Calorias')
+
 from pyspark.ml.feature import OneHotEncoderEstimator, StringIndexer, VectorAssembler
-categoricalColumns = ['Ejercicio_Fisico']
+categoricalColumns = ['Edad','Ejercicio_Fisico','Especialidad','EstadoCivil','Estudias','Lectura','Musica','Sales_Social','Sexo','Tipo_Contrato','Tipo_Trabajo','Contrato_Adjunto','Burnout_Antes','Burnout_Despues','Niveles_deSueno']
+#categoricalColumns= ['Edad','Ejercicio_Fisico']
 stages = []
 
 for categoricalCol in categoricalColumns:
     stringIndexer = StringIndexer(inputCol = categoricalCol, outputCol = categoricalCol + 'Index')
     encoder = OneHotEncoderEstimator(inputCols=[stringIndexer.getOutputCol()], outputCols=[categoricalCol + "classVec"])
-    stages += [stringIndexer, encoder]
+    stages += [stringIndexer.setHandleInvalid("keep"), encoder]
 
-#label_stringIdx = StringIndexer(inputCol = 'Burnout_Antes', outputCol = 'label')
-#stages += [label_stringIdx]
-
-numericCols = ['Frecuencia_Cardiaca_Minuto']
+#numericCols = ['Frecuencia_Cardiaca_Minuto','Calorias']
+numericCols = ['Altura','Anos_Residente','Hijos','Peso','Tiempo_PlazaActual','Tiempo_Vida_Laboral','Ultima_Encuesta_Cansancio_Emocional','Ultima_Encuesta_Despersonalizacion','Ultima_Encuesta_Realizacion_Personal','Viajas','Horas_Cuidados','Horas_Activ_Fisica','Hora_Gratificante','Hora_Social','Cansancio_Emocional','Despersonalizacion','Realizacion_Personal','Calorias','Max_HeartRate','Min_HeartRate','Resting_HeartRate','Frecuencia_Cardiaca_Minuto','Duracion_Sueno','Eficiencia_Sueno']
 assemblerInputs = [c + "classVec" for c in categoricalColumns] + numericCols
 assembler = VectorAssembler(inputCols=assemblerInputs, outputCol="features")
-stages += [assembler.setHandleInvalid("skip")]
-
-
-pca = PCA(k=2, inputCol="features", outputCol="pcaFeatures")
+stages += [assembler.setHandleInvalid("keep")]
 
 from pyspark.ml import Pipeline
-pipeline = Pipeline(stages = [stages,pca])
-print(df.head)
-model = pipeline.fit(df)
+pipeline = Pipeline(stages = stages)
+pipelineModel = pipeline.fit(data)
+data = pipelineModel.transform(data)
+# Standardize the data to have a mean of ~0 and a variance of 1
 
-xy = model.transform(df).select("pcaFeatures").map(lambda row: [row[0][0], row[0][1]]).collect()
+from pyspark.ml.feature import PCA
+pca = PCA(k=20, inputCol='features', outputCol='features_pca')
+pca_model = pca.fit(data)
+pca_data = pca_model.transform(data).select('features_pca')
+print(pca_model.explainedVariance)
 
-xy = np.array(xy)
+plt.bar(range(1,len(pca_model.explainedVariance)+1),pca_model.explainedVariance)
+plt.ylabel('Explained variance')
+plt.xlabel('Components')
+plt.plot(range(1,len(pca_model.explainedVariance)+1),
+         np.cumsum(pca_model.explainedVariance),
+         c='red',
+         label="Cumulative Explained Variance")
+plt.legend(loc='upper left')
 
-x=np.array(zip(*xy)[0])
-y=np.array(zip(*xy)[1])
-
-#plt.scatter(x,y)
-#plt.show()
-
-plt.hexbin(x,y,  gridsize=30)
+plt.plot(pca_model.explainedVariance)
+plt.xlabel('number of components')
+plt.ylabel('cumulative explained variance')
 plt.show()
 
-nbins = 55
-
-k = kde.gaussian_kde(np.transpose(xy))
-xi, yi = np.mgrid[x.min():x.max():nbins*1j, y.min():y.max():nbins*1j]
-zi = k(np.vstack([xi.flatten(), yi.flatten()]))
-plt.pcolormesh(xi, yi, zi.reshape(xi.shape))
-plt.show()
+print(pca_model.components)
+print(pca_model.pc)
 
 

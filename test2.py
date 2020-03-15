@@ -1,81 +1,24 @@
-import json
-from textwrap import dedent as d
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
-
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app.config.suppress_callback_exceptions = True
-styles = {
-    'pre': {
-        'border': 'thin lightgrey solid',
-        'overflowX': 'scroll'
-    }
-}
-
-app.layout = html.Div([
-    dcc.Graph(
-        id='basic-interactions',
-        figure={
-            'data': [
-                {
-                    'x': [1, 2, 3, 4],
-                    'y': [4, 1, 3, 5],
-                    'text': ['a', 'b', 'c', 'd'],
-                    'customdata': ['c.a', 'c.b', 'c.c', 'c.d'],
-                    'name': 'Trace 1',
-                    'mode': 'markers',
-                    'marker': {'size': 12}
-                },
-                {
-                    'x': [1, 2, 3, 4],
-                    'y': [9, 4, 1, 4],
-                    'text': ['w', 'x', 'y', 'z'],
-                    'customdata': ['c.w', 'c.x', 'c.y', 'c.z'],
-                    'name': 'Trace 2',
-                    'mode': 'markers',
-                    'marker': {'size': 12}
-                }
-            ],
-            'layout': {
-                'clickmode': 'event+select'
-            }
-        }
-    ),
-])
-
-
-@app.callback(
-    Output('hover-data', 'children'),
-    [Input('basic-interactions', 'hoverData')])
-def display_hover_data(hoverData):
-    return json.dumps(hoverData, indent=2)
-
-
-@app.callback(
-    Output('click-data', 'children'),
-    [Input('basic-interactions', 'clickData')])
-def display_click_data(clickData):
-    return json.dumps(clickData, indent=2)
-
-
-@app.callback(
-    Output('selected-data', 'children'),
-    [Input('basic-interactions', 'selectedData')])
-def display_selected_data(selectedData):
-    return json.dumps(selectedData, indent=2)
-
-
-@app.callback(
-    Output('relayout-data', 'children'),
-    [Input('basic-interactions', 'relayoutData')])
-def display_relayout_data(relayoutData):
-    return json.dumps(relayoutData, indent=2)
-
+from dash.dependencies import Output, State, Input
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app = dash.Dash()
+
+    app.layout = html.Div([
+        dcc.Input(id='username', value='Initial Value', type='text'),
+        dcc.Input(id='correo', value='Initial Value', type='text'),
+        html.Button(id='submit-button', type='submit', children='Submit'),
+        html.Div(id='output_div')
+    ])
+
+    @app.callback(Output('output_div', 'children'),
+                  [Input('submit-button', 'n_clicks')],
+                  [State('username', 'value'),State('correo', 'value')]
+                  )
+    def update_output(clicks, input_value,input_value2):
+        if clicks is not None:
+            print(clicks, input_value,input_value2)
+
+    app.run_server(host='0.0.0.0')
