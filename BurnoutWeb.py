@@ -1,5 +1,4 @@
 import re
-
 import dash
 from dash.dependencies import Input, Output,State
 import dash_table
@@ -9,36 +8,16 @@ import dash_bootstrap_components as dbc
 import query
 import pandas as pd
 import Clasificacion
-
-navbar = dbc.NavbarSimple(
-    children=[
-        dbc.NavItem(dbc.NavLink("Sistema de Detección", href="/deteccion")),
-        dbc.DropdownMenu(
-            nav=True,
-            in_navbar=True,
-            label="Datos Categorizados",
-            children=[
-                dbc.DropdownMenuItem("Burnout & Datos Fisiológicos en Detalle", href="/fisiologicos"),
-                dbc.DropdownMenuItem("Burnout & Datos Fisiológicos por Paciente", href="/paciente"),
-                dbc.DropdownMenuItem(divider=True),
-                dbc.DropdownMenuItem("Burnout por Subescalas", href="/subescalas"),
-                dbc.DropdownMenuItem("Burnout por Subescalas Individuales", href="/subescalasindividual"),
-                dbc.DropdownMenuItem(divider=True),
-                dbc.DropdownMenuItem("Burnout por Especialidad", href="/especialidad"),
-                dbc.DropdownMenuItem(divider=True),
-                dbc.DropdownMenuItem("Burnout por Sexo", href="/sexo"),
-            ],
-
-        ),
-        dbc.NavItem(dbc.NavLink("Descargar los Datos", href="https://storage.googleapis.com/burnout/Burnout_Data.csv"))
-    ],
-    brand="Burnout",
-    #brand_external_link='https://storage.cloud.google.com/burnout/Burnout.png'
-    #src='data:image/png;base64,{}'.format(encoded_image),
-    brand_href="http://127.0.0.1:8050/",
-    sticky="top",
-
-)
+import PanelNavegacion
+import Fisiologicos
+import PCA
+import FisiologicosXPaciente
+import Subescalas
+import SubescalasIndividuales
+import BurnoutXEspecialidad
+import BurnoutXSexo
+import SistemaDeDeteccionHTML
+import BodyIndexHTML
 
 colors = {
     'background': '#111111',
@@ -54,389 +33,7 @@ styles = {
         'overflowX': 'scroll'
     }
 }
-Fisiologicos = dbc.Container(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.H2("Burnout & Datos Fisiológicos en Detalle"),
-                        dash_table.DataTable(
-                            id='datatable-interactivity',
-                            columns=[
-                                {"name": i, "id": i, "deletable": True, "selectable": True} for i in query.df_DatosFisiologicos.columns
-                            ],
-                            style_table={'overflowX': 'scroll'},
-                            style_cell={
-                                # all three widths are needed
-                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
-                                'overflow': 'hidden',
-                                'textOverflow': 'ellipsis',
-                            },
-                            data=query.df_DatosFisiologicos.to_dict('records'),
-                            filter_action="native",
-                            sort_action="native",
-                            sort_mode='multi',
-                            row_selectable='multi',
-                            row_deletable=True,
-                            selected_rows=[],
-                            page_action='native',
-                            page_current=0,
-                            page_size=4,
-                        ),
-                        html.Div(id='datatable-interactivity-container'),
-                    ],
-                    md=12,
-                ),
 
-            ]
-        )
-    ],
-    className="mt-4",
-)
-
-FisiologicosXPaciente = dbc.Container(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.H2("Burnout & Datos Fisiológicos por Paciente"),
-                        dash_table.DataTable(
-                            id='datatable-interactivity6',
-                            columns=[
-                                {"name": i, "id": i, "deletable": True, "selectable": True} for i in query.df_DatosFisiologicosIndividuales.columns
-                            ],
-                            style_table={'overflowX': 'scroll'},
-                            style_cell={
-                                # all three widths are needed
-                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
-                                'overflow': 'hidden',
-                                'textOverflow': 'ellipsis',
-                            },
-                            data=query.df_DatosFisiologicosIndividuales.to_dict('records'),
-                            filter_action="native",
-                            sort_action="native",
-                            sort_mode='multi',
-                            row_selectable='multi',
-                            row_deletable=True,
-                            selected_rows=[],
-                            page_action='native',
-                            page_current=0,
-                            page_size=4,
-                        ),
-                        html.Div(id='datatable-interactivity-container6'),
-                    ],
-                    md=12,
-                ),
-
-            ]
-        )
-    ],
-    className="mt-4",
-)
-
-Subescalas = dbc.Container(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.H2("Burnout por Subescalas"),
-                        dash_table.DataTable(
-                            id='datatable-interactivity2',
-                            columns=[
-                                {"name": i, "id": i, "deletable": True, "selectable": True} for i in query.df_SubescalasBurnout.columns
-                            ],
-                            style_table={'overflowX': 'scroll'},
-                            style_cell={
-                                # all three widths are needed
-                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
-                                'overflow': 'hidden',
-                                'textOverflow': 'ellipsis',
-                            },
-                            data=query.df_SubescalasBurnout.to_dict('records'),
-                            filter_action="native",
-                            sort_action="native",
-                            sort_mode='multi',
-                            row_selectable='multi',
-                            row_deletable=True,
-                            selected_rows=[],
-                            page_action='native',
-                            page_current=0,
-                            page_size=4,
-                        ),
-                        html.Div(id='datatable-interactivity-container2'),
-                    ],
-                    md=12,
-                ),
-
-            ]
-        )
-    ],
-    className="mt-4",
-)
-
-SubescalasIndividuales = dbc.Container(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.H2("Burnout & Subescalas por Paciente"),
-                        dash_table.DataTable(
-                            id='datatable-interactivity3',
-                            columns=[
-                                {"name": i, "id": i, "deletable": True, "selectable": True} for i in query.df_SubescalasIndividual.columns
-                            ],
-                            style_table={'overflowX': 'scroll'},
-                            style_cell={
-                                # all three widths are needed
-                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
-                                'overflow': 'hidden',
-                                'textOverflow': 'ellipsis',
-                            },
-                            data=query.df_SubescalasIndividual.to_dict('records'),
-                            filter_action="native",
-                            sort_action="native",
-                            sort_mode='multi',
-                            row_selectable='multi',
-                            row_deletable=True,
-                            selected_rows=[],
-                            page_action='native',
-                            page_current=0,
-                            page_size=4,
-                        ),
-                        html.Div(id='datatable-interactivity-container3'),
-                    ],
-                    md=12,
-                ),
-
-            ]
-        )
-    ],
-    className="mt-4",
-)
-
-BurnoutXEspecialidad = dbc.Container(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.H2("Burnout por Especialidad"),
-                        dash_table.DataTable(
-                            id='datatable-interactivity4',
-                            columns=[
-                                {"name": i, "id": i, "deletable": True, "selectable": True} for i in query.df_Especialidad.columns
-                            ],
-                            style_table={'overflowX': 'scroll'},
-                            style_cell={
-                                # all three widths are needed
-                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
-                                'overflow': 'hidden',
-                                'textOverflow': 'ellipsis',
-                            },
-                            data=query.df_Especialidad.to_dict('records'),
-                            filter_action="native",
-                            sort_action="native",
-                            sort_mode='multi',
-                            row_selectable='multi',
-                            row_deletable=True,
-                            selected_rows=[],
-                            page_action='native',
-                            page_current=0,
-                            page_size=4,
-                        ),
-                        html.Div(id='datatable-interactivity-container4'),
-                    ],
-                    md=12,
-                ),
-
-            ]
-        )
-    ],
-    className="mt-4",
-)
-
-BurnoutXSexo = dbc.Container(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.H2("Burnout por Sexo"),
-                        dash_table.DataTable(
-                            id='datatable-interactivity5',
-                            columns=[
-                                {"name": i, "id": i, "deletable": True, "selectable": True} for i in query.df_Sexo.columns
-                            ],
-                            style_table={'overflowX': 'scroll'},
-                            style_cell={
-                                # all three widths are needed
-                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
-                                'overflow': 'hidden',
-                                'textOverflow': 'ellipsis',
-                            },
-                            data=query.df_Sexo.to_dict('records'),
-                            filter_action="native",
-                            sort_action="native",
-                            sort_mode='multi',
-                            row_selectable='multi',
-                            row_deletable=True,
-                            selected_rows=[],
-                            page_action='native',
-                            page_current=0,
-                            page_size=4,
-                        ),
-                        html.Div(id='datatable-interactivity-container5'),
-                    ],
-                    md=12,
-                ),
-
-            ]
-        )
-    ],
-    className="mt-4",
-)
-
-SistemaDeDeteccion = dbc.Container(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.H2("Sistema de Detección"),
-                        dbc.FormGroup(
-                            [
-                                dbc.Label("Nombre"),
-                                dbc.Input(id="nombre", type="text", value=""),
-                                dbc.Label("Email"),
-                                dbc.Input(id="email-input", type="email", value=""),
-                                dbc.FormFeedback(
-                                    "That looks like a gmail address :-)", valid=True
-                                ),
-                                dbc.FormFeedback(
-                                    "Sorry, we only accept gmail for some reason...",
-                                    valid=False,
-                                ),
-                                dbc.Label("Sexo", html_for="example-radios-row", width=4),
-                                dbc.Col(
-                                    dbc.RadioItems(
-                                        id="Sexo",
-                                        options=[
-                                            {"label": "Hombre", "value": "hombre"},
-                                            {"label": "Mujer", "value": "mujer"},
-                                        ],
-                                    ),
-                                    width=10,
-                                ),
-                                dbc.Label("Edad"),
-                                dbc.Input(id="edad", type="int", value=""),
-                                dbc.FormFeedback(
-                                    "OK EDAD:-)", valid=True
-                                ),
-                                dbc.FormFeedback(
-                                    "MAL",
-                                    valid=False,
-                                ),
-                                dbc.Label("Peso"),
-                                dbc.Input(id="peso", type="int", value=""),
-                                dbc.FormFeedback(
-                                    "OK Peso:-)", valid=True
-                                ),
-                                dbc.FormFeedback(
-                                    "MAL Peso",
-                                    valid=False,
-                                ),
-                                dbc.Label("Numero de Hijos"),
-                                dbc.Input(id="hijos", type="int", value=""),
-
-                                dbc.Label("Estado Civil", html_for="dropdown"), #EstadoCivil
-                                dcc.Dropdown(id="EstadoCivil",options=[
-                                        {"label": "Soltero", "value": "soltero"},
-                                        {"label": "Casado", "value": "casado"},
-                                        {"label": "Divorciado", "value": "divorciado"},
-                                    ],
-                                ),
-
-                                dbc.Label("Contrato de Trabajo Actual", html_for="dropdown"), #Contrato_Adjunto
-                                dcc.Dropdown(id="Contrato_Adjunto",options=[
-                                        {"label": "fijo", "value": 1},
-                                        {"label": "eventual", "value": 2},
-                                        {"label": "interino", "value": 3},
-                                        {"label": "N/A", "value": 4},
-                                    ],
-                                ),
-
-                               dbc.Label("Frecuencia de Musica", html_for="dropdown"), #Musica
-                                dcc.Dropdown(id="Musica",options=[
-                                        {"label": "Habitualmente", "value": "habitualmente"},
-                                        {"label": "Ocasionalmente", "value": "ocasionalmente"},
-                                        {"label": "Nunca", "value": "nunca"},
-                                    ],
-                                ),
-                                dbc.Label("Frecuencia de Estudio", html_for="dropdown"), #Estudio
-                                dcc.Dropdown(id="Estudio",options=[
-                                        {"label": "Habitualmente", "value": "habitualmente"},
-                                        {"label": "Ocasionalmente", "value": "ocasionalmente"},
-                                        {"label": "Nunca", "value": "nunca"},
-                                    ],
-                                ),
-
-                                dbc.Label("Frecuencia de Salida Socialmente", html_for="dropdown"), #Sales_Social
-                                dcc.Dropdown(id="Sales_Social",options=[
-                                        {"label": "Habitualmente", "value": "habitualmente"},
-                                        {"label": "Ocasionalmente", "value": "ocasionalmente"},
-                                        {"label": "Nunca", "value": "nunca"},
-                                    ],
-                                ),
-
-                                dbc.Label("Frecuencia de Lectura", html_for="dropdown"), #Lectura
-                                dcc.Dropdown(id="Lectura",options=[
-                                        {"label": "Habitualmente", "value": "habitualmente"},
-                                        {"label": "Ocasionalmente", "value": "ocasionalmente"},
-                                        {"label": "Nunca", "value": "nunca"},
-                                    ],
-                                ),
-
-                                dbc.Label("Frecuencia Cardiaca por Minuto"),#Frecuencia_Cardiaca_Minuto
-                                dbc.Input(id="Frecuencia_Cardiaca_Minuto", type="int", value=""),
-
-                                dbc.Label("Frecuencia Cardiaca en Descanso por Minuto"),#Resting_HeartRate
-                                dbc.Input(id="Resting_HeartRate", type="int", value=""),
-
-                                dbc.Label("Calorias quemadas al día"),#Calorias
-                                dbc.Input(id="Calorias", type="int", value=""),
-
-                                dbc.Label("Tiempo en años en el Trabajo Actual"),#Tiempo_PlazaActual
-                                dbc.Input(id="Tiempo_PlazaActual", type="int", value=""),
-
-                                dbc.Label("Horas al Mes que se dedican a Salidas Sociales"),#Hora_Social
-                                dbc.Input(id="Hora_Social", type="int", value=""),
-
-                                dbc.Label("Horas al Mes que se dedican a Cuidados Personales"),#Horas_Cuidados
-                                dbc.Input(id="Horas_Cuidados", type="int", value=""),
-
-                                dbc.Label("Años de Vida Laboral"),#Tiempo_Vida_Laboral
-                                dbc.Input(id="Tiempo_Vida_Laboral", type="int", value=""),
-
-                                dbc.Label("Horas de Sueño al día"),#Minutos_Dormido
-                                dbc.Input(id="Minutos_Dormido", type="int", value=""),
-
-                                html.Button(id='submit-button', type='submit', children='Submit'),
-                                html.Div(id='output_div')
-                            ]
-                        )
-                    ],
-                    md=12,
-                ),
-
-            ]
-        )
-    ],
-    className="mt-4",
-)
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.config.suppress_callback_exceptions = True
@@ -446,128 +43,15 @@ app.layout = html.Div([
 ])
 app.title = 'Burnout Data Website'
 
-bodyIndex = dbc.Container(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.H2("¿Qué es el Burnout?"),
-                        html.P(
-                            """El término burnout o síndrome de quemado por el trabajo se define como la respuesta inadecuada al estrés emocional 
-                             crónico que resulta de una discrepancia entre los ideales individuales y la realidad de la vida ocupacional diaria,
-                             requiriéndose al menos seis meses de período adaptativo."""
-                        ),
-                        dbc.Button(
-                            "Ver dimensiones del Burnout",
-                            id="collapse-button",
-                            className="mb-3",
-                            color="primary",
-                        ),
-                        dbc.Collapse(
-                            dbc.Card([html.H5("Agotamiento Emocional:"),dbc.CardBody("Pérdida o desgaste de recursos emocionales. "),
-                                                  html.H5("Deshumanización o Despersonalización:"),dbc.CardBody("Actitudes negativas, cínicas e insensibles hacia los pacientes, familiares o compañeros."),
-                                                  html.H5("Falta de realización personal en el trabajo:"),dbc.CardBody("Tendencia a evaluar el propio trabajo de forma negativa, sentimientos de inadecuación o fracaso.")]),
-                            id="collapse",
-                        ),
-                    ],
-                    md=6,
-                ),dbc.Col(
-                    [
-                        html.H2("Factores de Riesgo"),
-                        html.P("""Características Personales: Auto criticismo, uso de estrategias de afrontamiento ineficaces, de privación del sueño, desbalance del trabajo & vida personal"""),
-                        html.P("""La Organización: Carga de trabajo execiva, falta de control sobre el ambiente laboral, recompensas insuficientes"""),
-                        html.P("""Calidad de las relaciones personales laborales: Conflicto y mal ambiente"""),
-                        dbc.Button(
-                            "Ver consecuencias del Burnout",
-                            id="collapse-button2",
-                            className="mb-3",
-                            color="primary",
-                        ),
-                        dbc.Collapse(
-                            dbc.Card([dbc.CardBody("Trastorno de Estrés Postraumático."),html.Br(),
-                            dbc.CardBody("Abuso de Alchol e incluso ideación autolítica."),html.Br(),
-                            dbc.CardBody("Aumento de errores en el entorno laboral.")]),
-                            id="collapse2",
-                        ),
-                    ],
-                    md=6,
-                )
-            ]
-        ),
-        dbc.Row(
-                dbc.Col(
-                    [
-                        html.H2("Datos Recopilados"),
-                        html.P("La población de este estudio esta compuesta por médicos de servicios de Urgencias y Psiquiatría de dos hospitales participantes, "
-                               "Hospital Son Llàtzer de Palma de Mallorca y el Hospital Infanta Sofía de San Sebastian de los Reyes, Madrid."),html.Br(),
-                        html.P("Gracias a ellos hemos podido presentar los datos contenidos en esta página web, concluir ciertas hipótesis y construir un sistema de detección del Síndrome de Burnout."),
-                        dcc.Graph(figure={
-                "data": [
-                    {
-                        "x": query.df_DatosFisiologicos["Burnout"],
-                        "y": query.df_DatosFisiologicos["Calorias"],
-                        "type": "bar",
-                        "marker": {"color": color},
-                        'name': 'Calorias',
-                    },{
-                        "x": query.df_DatosFisiologicos["Burnout"],
-                        "y": query.df_DatosFisiologicos["Frecuencia_Cardiaca_Minuto"],
-                        "type": "bar",
-                        "marker": {"color": color},
-                        'name': 'Frecuencia_Cardiaca_Minuto',
-                    },{
-                        "x": query.df_DatosFisiologicos["Burnout"],
-                        "y": query.df_DatosFisiologicos["Eficiencia_Sueno"],
-                        "type": "bar",
-                        "marker": {"color": color},
-                        'name': 'Eficiencia_Sueno',
-                    },{
-                        "x": query.df_DatosFisiologicos["Burnout"],
-                        "y": query.df_DatosFisiologicos["Resting_HeartRate"],
-                        "type": "bar",
-                        "marker": {"color": color},
-                        'name': 'Resting_HeartRate',
-                    },{
-                        "x": query.df_DatosFisiologicos["Burnout"],
-                        "y": query.df_DatosFisiologicos["Max_HeartRate"],
-                        "type": "bar",
-                        "marker": {"color": color},
-                        'name': 'Max_HeartRate',
-                    },{
-                        "x": query.df_DatosFisiologicos["Burnout"],
-                        "y": query.df_DatosFisiologicos["Min_HeartRate"],
-                        "type": "bar",
-                        "marker": {"color": color},
-                        'name': 'Min_HeartRate',
-                    },
-
-                ],
-                "layout": {
-                    "xaxis": {"automargin": False},
-                    "yaxis": {
-                        "automargin": False,
-                        "title": {"text": "Calorias"}
-                    },
-                    "height": 250,
-                    "margin": {"t": 50, "l": 50, "r": 50},
-                },
-            }),
-                    ]
-                )
-        )
-    ],
-    className="mt-4",
-)
-
-index_page = html.Div([navbar,bodyIndex])
-page_1_layout = html.Div([navbar,Fisiologicos])
-page_2_layout = html.Div([navbar,Subescalas])
-page_3_layout = html.Div([navbar,SubescalasIndividuales])
-page_4_layout = html.Div([navbar,BurnoutXEspecialidad])
-page_5_layout = html.Div([navbar,BurnoutXSexo])
-page_6_layout = html.Div([navbar,FisiologicosXPaciente])
-page_7_layout = html.Div([navbar,SistemaDeDeteccion])
+index_page = html.Div([PanelNavegacion.navbar,BodyIndexHTML.bodyIndex])
+page_1_layout = html.Div([PanelNavegacion.navbar,Fisiologicos.Fisiologicos])
+page_2_layout = html.Div([PanelNavegacion.navbar,Subescalas.Subescalas])
+page_3_layout = html.Div([PanelNavegacion.navbar,SubescalasIndividuales.SubescalasIndividuales])
+page_4_layout = html.Div([PanelNavegacion.navbar,BurnoutXEspecialidad.BurnoutXEspecialidad])
+page_5_layout = html.Div([PanelNavegacion.navbar,BurnoutXSexo.BurnoutXSexo])
+page_6_layout = html.Div([PanelNavegacion.navbar,FisiologicosXPaciente.FisiologicosXPaciente])
+page_7_layout = html.Div([PanelNavegacion.navbar,SistemaDeDeteccionHTML.SistemaDeDeteccion])
+page_8_layout = html.Div([PanelNavegacion.navbar,PCA.PCA])
 @app.callback(dash.dependencies.Output('page-content', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_page(pathname):
@@ -585,6 +69,8 @@ def display_page(pathname):
         return page_6_layout
     if pathname == '/deteccion':
         return page_7_layout
+    if pathname == '/PCA':
+        return page_8_layout
     else:
         return index_page
 
@@ -1532,6 +1018,11 @@ def toggle_collapse(n, is_open):
     [State("collapse2", "is_open")],
 )
 
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
 @app.callback(
     [Output("email-input", "valid"), Output("email-input", "invalid")],
     [Input("email-input", "value")],
@@ -1544,20 +1035,14 @@ def check_validity(text):
     return False, False
 
 @app.callback(
-    [Output("edad", "valid"), Output("edad", "invalid")],
+    [Output("edad", "valid")],
     [Input("edad", "value")],
 )
-
 def check_edad(edad):
     if edad:
-        is_gmail = bool(re.match("^[0-9 \-]+$", edad))
+        is_gmail = bool(re.match("^[0-9 \-]+$", str(edad)))
         return is_gmail, not is_gmail
     return False, False
-
-def toggle_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
 
 @app.callback(Output('output_div', 'children'),
                   [Input('submit-button', 'n_clicks')],
@@ -1565,16 +1050,20 @@ def toggle_collapse(n, is_open):
                    State('hijos', 'value'),State('EstadoCivil', 'value'),State('Contrato_Adjunto', 'value'),State('Musica', 'value'),
                    State('Estudio', 'value'),State('Sales_Social', 'value'),State('Lectura', 'value'),State('Frecuencia_Cardiaca_Minuto', 'value'),
                    State('Resting_HeartRate', 'value'),State('Calorias', 'value'),State('Tiempo_PlazaActual', 'value'),State('Hora_Social', 'value'),
-                   State('Horas_Cuidados', 'value'),State('Tiempo_Vida_Laboral', 'value'),State('Minutos_Dormido', 'value')
+                   State('Horas_Cuidados', 'value'),State('Tiempo_Vida_Laboral', 'value'),State('Minutos_Dormido', 'value'),State('Estado_Animo', 'value'),State('Cantidad_Sueno_Profundo', 'value')
                    ]
-
               )
-def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Frecuencia_Cardiaca_Minuto,Resting_HeartRate,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Minutos_Dormido):
-    if clicks is not None:
-        print(nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Frecuencia_Cardiaca_Minuto,Resting_HeartRate,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Minutos_Dormido)
-        df = pd.DataFrame({'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)], 'Hijos': [float(hijos)], 'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica], 'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura], 'Frecuencia_Cardiaca_Minuto': [float(Frecuencia_Cardiaca_Minuto)], 'Resting_HeartRate': [float(Resting_HeartRate)], 'Calorias': [float(Calorias)], 'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)], 'Horas_Cuidados': [float(Horas_Cuidados)], 'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Minutos_Dormido': [float(Minutos_Dormido)], 'Estado_Animo': [''], 'Cantidad_Sueno_Profundo': [2]})
-        data=Clasificacion.DataPreparation(df)
-        Clasificacion.LinearEvaluation(data)
 
-if __name__ == "__main__":
-    app.run_server()
+def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Frecuencia_Cardiaca_Minuto,Resting_HeartRate,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Minutos_Dormido,Estado_Animo,Cantidad_Sueno_Profundo):
+    if clicks is not None:
+        print(nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Frecuencia_Cardiaca_Minuto,Resting_HeartRate,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Minutos_Dormido,Estado_Animo,Cantidad_Sueno_Profundo)
+        df = pd.DataFrame({'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)], 'Hijos': [float(hijos)], 'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica], 'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura], 'Frecuencia_Cardiaca_Minuto': [float(Frecuencia_Cardiaca_Minuto)], 'Resting_HeartRate': [float(Resting_HeartRate)], 'Calorias': [float(Calorias)], 'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)], 'Horas_Cuidados': [float(Horas_Cuidados)], 'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Minutos_Dormido': [float(Minutos_Dormido)], 'Estado_Animo': [Estado_Animo], 'Cantidad_Sueno_Profundo': [float(Cantidad_Sueno_Profundo)]})
+        data=Clasificacion.DataPreparation(df)
+        prediccion,probabilidad=Clasificacion.LinearEvaluation(data)
+        prediccion2, probabilidad2 = Clasificacion.RandomForest(data)
+        #prediccion3,probabilidad3 = Clasificacion.GradientTree(data)
+    return '{} Tu evaluación es: {} y la probabilidad es: {} Para el algoritmo de Regresión Lineal'.format(nombre,prediccion,probabilidad),'\n Tu evaluación es: {} y la probabilidad es: {} Para el algoritmo de Random Forest '.format(prediccion2,probabilidad2)
+
+
+if __name__ == '__main__':
+    app.run_server(host='0.0.0.0', port=80)

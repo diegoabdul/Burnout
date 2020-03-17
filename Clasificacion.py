@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pyspark.ml.classification import LogisticRegressionModel
 from pyspark.ml.classification import RandomForestClassificationModel
+from pyspark.ml.classification import GBTClassificationModel
 import os
 from pyspark.sql import SparkSession
 from pyspark.sql import SQLContext
@@ -11,13 +12,13 @@ sqlContext = SQLContext(sc)
 
 def DataPreparation(df):
     spark = SparkSession.builder.appName('SistemaDeDeteccion').getOrCreate()
-    #data = spark.read.csv("test.csv",header=True, inferSchema=True)
+    #data = spark.read.csv("Burnout_Data.csv",header=True, inferSchema=True)
     data = spark.createDataFrame(df)
     data = data.select('Tiempo_PlazaActual', 'EstadoCivil', 'Hora_Social', 'Horas_Cuidados',
                        'Resting_HeartRate', 'Calorias', 'Frecuencia_Cardiaca_Minuto', 'Peso', 'Contrato_Adjunto', 'Musica',
                        'Sexo', 'Estudias', 'Sales_Social', 'Edad', 'Estado_Animo', 'Cantidad_Sueno_Profundo',
                        'Tiempo_Vida_Laboral', 'Hijos', 'Lectura', 'Minutos_Dormido')
-    data.show()
+    cols = data.columns
 
     from pyspark.ml import PipelineModel
     path = 'modelo_Pipeline/Pipeline'
@@ -32,14 +33,40 @@ def LinearEvaluation(data):
     lrModel = LogisticRegressionModel.load(path)
     #print(lrModel.coefficientMatrix)
     #predictions=lrModel.transform(data)
-    predictions = lrModel.transform(data)
-    predictions.show()
+    predictions = lrModel.transform(data) #VERDADERO = 0 Y FALSO 1
+    prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
+    if prediccion[0] == 1.0:
+        prediccionLabel='VERDADERO'
+    else:
+        prediccionLabel='FALSO'
+
+    return prediccionLabel,prediccion[1][0]*100
 
 def RandomForest(data):
     path = 'modelo_RandomForest/modelRandomForest'
     randomModel = RandomForestClassificationModel.load(path)
     predictions = randomModel.transform(data)
-    predictions.show()
+    prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
+    if prediccion[0] == 1.0:
+        prediccionLabel = 'VERDADERO'
+    else:
+        prediccionLabel = 'FALSO'
+
+    return prediccionLabel, prediccion[1][0] * 100
+
+def GradientTree(data):
+    path = 'modelo_GradientBoosted/modelGradientBoosted'
+    CVModel = GBTClassificationModel.load(path)
+    predictions = CVModel.transform(data)
+    prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
+    print(prediccion[0])
+    print(prediccion[1][0] * 100)
+    if prediccion[0] == 1.0:
+        prediccionLabel = 'VERDADERO'
+    else:
+        prediccionLabel = 'FALSO'
+
+    return prediccionLabel, prediccion[1][0] * 100
 
 
 #data=DataPreparation()
