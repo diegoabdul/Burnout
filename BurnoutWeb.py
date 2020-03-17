@@ -19,6 +19,7 @@ import BurnoutXSexo
 import SistemaDeDeteccionHTML
 import BodyIndexHTML
 import BurnoutXTipoTrabajo
+import BurnoutXEstadoCivil
 
 colors = {
     'background': '#111111',
@@ -52,6 +53,10 @@ page_6_layout = html.Div([PanelNavegacion.navbar,FisiologicosXPaciente.Fisiologi
 page_7_layout = html.Div([PanelNavegacion.navbar,SistemaDeDeteccionHTML.SistemaDeDeteccion])
 page_8_layout = html.Div([PanelNavegacion.navbar,PCA.PCA])
 page_9_layout = html.Div([PanelNavegacion.navbar,BurnoutXTipoTrabajo.BurnoutXTipoTrabajo])
+page_1_layout = html.Div([PanelNavegacion.navbar,BurnoutXEstadoCivil.BurnoutXEstadoCivil])
+page_10_layout = html.Div([PanelNavegacion.navbar,BurnoutXEstadoCivil.BurnoutXContrato])
+page_11_layout = html.Div([PanelNavegacion.navbar,BurnoutXEstadoCivil.BurnoutXHijos])
+page_12_layout = html.Div([PanelNavegacion.navbar,BurnoutXEstadoCivil.BurnoutXEdad])
 @app.callback(dash.dependencies.Output('page-content', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_page(pathname):
@@ -71,6 +76,14 @@ def display_page(pathname):
         return page_8_layout
     if pathname == '/trabajo':
         return page_9_layout
+    if pathname == '/civil':
+        return page_1_layout
+    if pathname == '/contrato':
+        return page_10_layout
+    if pathname == '/hijos':
+        return page_11_layout
+    if pathname == '/edad':
+        return page_12_layout
     else:
         return index_page
 
@@ -850,6 +863,710 @@ def update_graphs3(rows, derived_virtual_selected_rows):
                         "name": "Despersonalizacion",
                     }, {
                         "x": dff["Sexo"],
+                        "y": dff["Realizacion_Personal"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    }
+                ],
+                "layout": {
+                    "xaxis": {"automargin": True},
+                    "yaxis": {
+                        "automargin": True
+                    },
+                    "height": 300,
+                    "margin": {"t": 50, "l": 50, "r": 50},
+                },
+            },
+        ),
+        # check if column exists - user may have deleted it
+        #If `column.deletable=False`, then you don't
+        # need to do this check.
+       # for column in ["Cansancio_Emocional","Despersonalizacion","Realizacion_Personal"] if column in dff
+    ]
+
+@app.callback(
+    Output('datatable-interactivity-container15', "children"),
+    [Input('datatable-interactivity15', "derived_virtual_data"),
+     Input('datatable-interactivity15', "derived_virtual_selected_rows")])
+def update_graphs3(rows, derived_virtual_selected_rows):
+    # When the table is first rendered, `derived_virtual_data` and
+    # `derived_virtual_selected_rows` will be `None`. This is due to an
+    # idiosyncracy in Dash (unsupplied properties are always None and Dash
+    # calls the dependent callbacks when the component is first rendered).
+    # So, if `rows` is `None`, then the component was just rendered
+    # and its value will be the same as the component's dataframe.
+    # Instead of setting `None` in here, you could also set
+    # `derived_virtual_data=df.to_rows('dict')` when you initialize
+    # the component.
+    if derived_virtual_selected_rows is None:
+        derived_virtual_selected_rows = []
+
+    dff = query.df_EstadoCivil if rows is None else pd.DataFrame(rows)
+
+    colors = ['#7FDBFF' if i in derived_virtual_selected_rows else '#0074D9'
+              for i in range(len(dff))]
+
+    return [
+        html.Br(),
+        html.H5("Primera Encuesta de Burnout"),
+        dcc.Graph(
+            id=31,
+            figure={
+                "data": [
+                    {
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Calorias"],
+                        "type": "bar",
+                        "marker": {"color": colors},
+                        "name": "Calorias",
+                    },
+                    {
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Frecuencia_Cardiaca_Minuto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name":"Frecuencia_Cardiaca_Minuto",
+                    },
+                    {
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Resting_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Eficiencia_Sueno"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Eficiencia_Sueno",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Peso"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Peso",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Hijos"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Hijos",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Tiempo_Plaza"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Plaza",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Tiempo_Vida_Laboral"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Vida_Laboral",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Max_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Max_HeartRate",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Min_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_HeartRate",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Minutos_Rem"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_Rem",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "SuenoProfundo",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Min_SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoProfundo",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Min_SuenoLigero"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoLigero",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Minutos_SuenoDespierto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_SuenoDespierto",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Min_Dormido"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Dormido",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Min_Despierto_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Despierto_enCama",
+                    },{
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Tiempo_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_enCama",
+                    }
+                    , {
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Cansancio_Emocional"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Cansancio_Emocional",
+                    }, {
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Despersonalizacion"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Despersonalizacion",
+                    }, {
+                        "x": dff["EstadoCivil"],
+                        "y": dff["Realizacion_Personal"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    }
+                ],
+                "layout": {
+                    "xaxis": {"automargin": True},
+                    "yaxis": {
+                        "automargin": True
+                    },
+                    "height": 300,
+                    "margin": {"t": 50, "l": 50, "r": 50},
+                },
+            },
+        ),
+        # check if column exists - user may have deleted it
+        #If `column.deletable=False`, then you don't
+        # need to do this check.
+       # for column in ["Cansancio_Emocional","Despersonalizacion","Realizacion_Personal"] if column in dff
+    ]
+
+@app.callback(
+    Output('datatable-interactivity-container16', "children"),
+    [Input('datatable-interactivity16', "derived_virtual_data"),
+     Input('datatable-interactivity16', "derived_virtual_selected_rows")])
+def update_graphs3(rows, derived_virtual_selected_rows):
+    # When the table is first rendered, `derived_virtual_data` and
+    # `derived_virtual_selected_rows` will be `None`. This is due to an
+    # idiosyncracy in Dash (unsupplied properties are always None and Dash
+    # calls the dependent callbacks when the component is first rendered).
+    # So, if `rows` is `None`, then the component was just rendered
+    # and its value will be the same as the component's dataframe.
+    # Instead of setting `None` in here, you could also set
+    # `derived_virtual_data=df.to_rows('dict')` when you initialize
+    # the component.
+    if derived_virtual_selected_rows is None:
+        derived_virtual_selected_rows = []
+
+    dff = query.df_Contrato if rows is None else pd.DataFrame(rows)
+
+    colors = ['#7FDBFF' if i in derived_virtual_selected_rows else '#0074D9'
+              for i in range(len(dff))]
+
+    return [
+        html.Br(),
+        html.H5("Primera Encuesta de Burnout"),
+        dcc.Graph(
+            id=31,
+            figure={
+                "data": [
+                    {
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Calorias"],
+                        "type": "bar",
+                        "marker": {"color": colors},
+                        "name": "Calorias",
+                    },
+                    {
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Frecuencia_Cardiaca_Minuto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name":"Frecuencia_Cardiaca_Minuto",
+                    },
+                    {
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Resting_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Eficiencia_Sueno"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Eficiencia_Sueno",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Peso"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Peso",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Hijos"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Hijos",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Tiempo_Plaza"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Plaza",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Tiempo_Vida_Laboral"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Vida_Laboral",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Max_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Max_HeartRate",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Min_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_HeartRate",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Minutos_Rem"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_Rem",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "SuenoProfundo",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Min_SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoProfundo",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Min_SuenoLigero"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoLigero",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Minutos_SuenoDespierto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_SuenoDespierto",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Min_Dormido"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Dormido",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Min_Despierto_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Despierto_enCama",
+                    },{
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Tiempo_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_enCama",
+                    }
+                    , {
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Cansancio_Emocional"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Cansancio_Emocional",
+                    }, {
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Despersonalizacion"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Despersonalizacion",
+                    }, {
+                        "x": dff["Tipo_Contrato"],
+                        "y": dff["Realizacion_Personal"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    }
+                ],
+                "layout": {
+                    "xaxis": {"automargin": True},
+                    "yaxis": {
+                        "automargin": True
+                    },
+                    "height": 300,
+                    "margin": {"t": 50, "l": 50, "r": 50},
+                },
+            },
+        ),
+        # check if column exists - user may have deleted it
+        #If `column.deletable=False`, then you don't
+        # need to do this check.
+       # for column in ["Cansancio_Emocional","Despersonalizacion","Realizacion_Personal"] if column in dff
+    ]
+
+@app.callback(
+    Output('datatable-interactivity-container17', "children"),
+    [Input('datatable-interactivity17', "derived_virtual_data"),
+     Input('datatable-interactivity17', "derived_virtual_selected_rows")])
+def update_graphs3(rows, derived_virtual_selected_rows):
+    # When the table is first rendered, `derived_virtual_data` and
+    # `derived_virtual_selected_rows` will be `None`. This is due to an
+    # idiosyncracy in Dash (unsupplied properties are always None and Dash
+    # calls the dependent callbacks when the component is first rendered).
+    # So, if `rows` is `None`, then the component was just rendered
+    # and its value will be the same as the component's dataframe.
+    # Instead of setting `None` in here, you could also set
+    # `derived_virtual_data=df.to_rows('dict')` when you initialize
+    # the component.
+    if derived_virtual_selected_rows is None:
+        derived_virtual_selected_rows = []
+
+    dff = query.df_Hijos if rows is None else pd.DataFrame(rows)
+
+    colors = ['#7FDBFF' if i in derived_virtual_selected_rows else '#0074D9'
+              for i in range(len(dff))]
+
+    return [
+        html.Br(),
+        html.H5("Primera Encuesta de Burnout"),
+        dcc.Graph(
+            id=31,
+            figure={
+                "data": [
+                    {
+                        "x": dff["Hijos"],
+                        "y": dff["Calorias"],
+                        "type": "bar",
+                        "marker": {"color": colors},
+                        "name": "Calorias",
+                    },
+                    {
+                        "x": dff["Hijos"],
+                        "y": dff["Frecuencia_Cardiaca_Minuto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name":"Frecuencia_Cardiaca_Minuto",
+                    },
+                    {
+                        "x": dff["Hijos"],
+                        "y": dff["Resting_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Eficiencia_Sueno"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Eficiencia_Sueno",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Peso"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Peso",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Hijos"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Hijos",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Tiempo_Plaza"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Plaza",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Tiempo_Vida_Laboral"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Vida_Laboral",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Max_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Max_HeartRate",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Min_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_HeartRate",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Minutos_Rem"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_Rem",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "SuenoProfundo",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Min_SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoProfundo",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Min_SuenoLigero"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoLigero",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Minutos_SuenoDespierto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_SuenoDespierto",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Min_Dormido"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Dormido",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Min_Despierto_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Despierto_enCama",
+                    },{
+                        "x": dff["Hijos"],
+                        "y": dff["Tiempo_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_enCama",
+                    }
+                    , {
+                        "x": dff["Hijos"],
+                        "y": dff["Cansancio_Emocional"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Cansancio_Emocional",
+                    }, {
+                        "x": dff["Hijos"],
+                        "y": dff["Despersonalizacion"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Despersonalizacion",
+                    }, {
+                        "x": dff["Hijos"],
+                        "y": dff["Realizacion_Personal"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    }
+                ],
+                "layout": {
+                    "xaxis": {"automargin": True},
+                    "yaxis": {
+                        "automargin": True
+                    },
+                    "height": 300,
+                    "margin": {"t": 50, "l": 50, "r": 50},
+                },
+            },
+        ),
+        # check if column exists - user may have deleted it
+        #If `column.deletable=False`, then you don't
+        # need to do this check.
+       # for column in ["Cansancio_Emocional","Despersonalizacion","Realizacion_Personal"] if column in dff
+    ]
+
+@app.callback(
+    Output('datatable-interactivity-container18', "children"),
+    [Input('datatable-interactivity18', "derived_virtual_data"),
+     Input('datatable-interactivity18', "derived_virtual_selected_rows")])
+def update_graphs3(rows, derived_virtual_selected_rows):
+    # When the table is first rendered, `derived_virtual_data` and
+    # `derived_virtual_selected_rows` will be `None`. This is due to an
+    # idiosyncracy in Dash (unsupplied properties are always None and Dash
+    # calls the dependent callbacks when the component is first rendered).
+    # So, if `rows` is `None`, then the component was just rendered
+    # and its value will be the same as the component's dataframe.
+    # Instead of setting `None` in here, you could also set
+    # `derived_virtual_data=df.to_rows('dict')` when you initialize
+    # the component.
+    if derived_virtual_selected_rows is None:
+        derived_virtual_selected_rows = []
+
+    dff = query.df_Edad if rows is None else pd.DataFrame(rows)
+
+    colors = ['#7FDBFF' if i in derived_virtual_selected_rows else '#0074D9'
+              for i in range(len(dff))]
+
+    return [
+        html.Br(),
+        html.H5("Primera Encuesta de Burnout"),
+        dcc.Graph(
+            id=31,
+            figure={
+                "data": [
+                    {
+                        "x": dff["Edad"],
+                        "y": dff["Calorias"],
+                        "type": "bar",
+                        "marker": {"color": colors},
+                        "name": "Calorias",
+                    },
+                    {
+                        "x": dff["Edad"],
+                        "y": dff["Frecuencia_Cardiaca_Minuto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name":"Frecuencia_Cardiaca_Minuto",
+                    },
+                    {
+                        "x": dff["Edad"],
+                        "y": dff["Resting_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Eficiencia_Sueno"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Eficiencia_Sueno",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Peso"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Peso",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Edad"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Edad",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Tiempo_Plaza"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Plaza",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Tiempo_Vida_Laboral"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Vida_Laboral",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Max_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Max_HeartRate",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Min_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_HeartRate",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Minutos_Rem"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_Rem",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "SuenoProfundo",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Min_SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoProfundo",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Min_SuenoLigero"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoLigero",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Minutos_SuenoDespierto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_SuenoDespierto",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Min_Dormido"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Dormido",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Min_Despierto_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Despierto_enCama",
+                    },{
+                        "x": dff["Edad"],
+                        "y": dff["Tiempo_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_enCama",
+                    }
+                    , {
+                        "x": dff["Edad"],
+                        "y": dff["Cansancio_Emocional"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Cansancio_Emocional",
+                    }, {
+                        "x": dff["Edad"],
+                        "y": dff["Despersonalizacion"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Despersonalizacion",
+                    }, {
+                        "x": dff["Edad"],
                         "y": dff["Realizacion_Personal"],
                         "type": "bar",
                         "marker": {"color": color},
