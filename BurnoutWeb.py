@@ -18,6 +18,7 @@ import BurnoutXEspecialidad
 import BurnoutXSexo
 import SistemaDeDeteccionHTML
 import BodyIndexHTML
+import BurnoutXTipoTrabajo
 
 colors = {
     'background': '#111111',
@@ -41,10 +42,8 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content'),
 ])
-app.title = 'Burnout Data Website'
-
+app.title = 'Burnout Study'
 index_page = html.Div([PanelNavegacion.navbar,BodyIndexHTML.bodyIndex])
-page_1_layout = html.Div([PanelNavegacion.navbar,Fisiologicos.Fisiologicos])
 page_2_layout = html.Div([PanelNavegacion.navbar,Subescalas.Subescalas])
 page_3_layout = html.Div([PanelNavegacion.navbar,SubescalasIndividuales.SubescalasIndividuales])
 page_4_layout = html.Div([PanelNavegacion.navbar,BurnoutXEspecialidad.BurnoutXEspecialidad])
@@ -52,11 +51,10 @@ page_5_layout = html.Div([PanelNavegacion.navbar,BurnoutXSexo.BurnoutXSexo])
 page_6_layout = html.Div([PanelNavegacion.navbar,FisiologicosXPaciente.FisiologicosXPaciente])
 page_7_layout = html.Div([PanelNavegacion.navbar,SistemaDeDeteccionHTML.SistemaDeDeteccion])
 page_8_layout = html.Div([PanelNavegacion.navbar,PCA.PCA])
+page_9_layout = html.Div([PanelNavegacion.navbar,BurnoutXTipoTrabajo.BurnoutXTipoTrabajo])
 @app.callback(dash.dependencies.Output('page-content', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == '/fisiologicos':
-        return page_1_layout
     if pathname == '/subescalas':
         return page_2_layout
     if pathname == '/subescalasindividual':
@@ -71,11 +69,13 @@ def display_page(pathname):
         return page_7_layout
     if pathname == '/PCA':
         return page_8_layout
+    if pathname == '/trabajo':
+        return page_9_layout
     else:
         return index_page
 
 @app.callback(
-    Output('datatable-interactivity-container', "children"),
+    Output('datatable-interactivity-container12', "children"),
     [Input('datatable-interactivity', "derived_virtual_data"),
      Input('datatable-interactivity', "derived_virtual_selected_rows")])
 def update_graphs(rows, derived_virtual_selected_rows):
@@ -91,7 +91,7 @@ def update_graphs(rows, derived_virtual_selected_rows):
     if derived_virtual_selected_rows is None:
         derived_virtual_selected_rows = []
 
-    dff = query.df_DatosFisiologicos if rows is None else pd.DataFrame(rows)
+    dff = query.df_PCA if rows is None else pd.DataFrame(rows)
 
     colors = ['#7FDBFF' if i in derived_virtual_selected_rows else '#0074D9'
               for i in range(len(dff))]
@@ -99,101 +99,26 @@ def update_graphs(rows, derived_virtual_selected_rows):
     return [
         dcc.Graph(
             id='basic-interactions',
-            figure={
-                'data': [
-                    {
-                        "x": dff["Burnout"],
-                        "y": dff["Calorias"],
-                        'text': 'Calorias',
-                        'name': 'Calorias',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Frecuencia_Cardiaca_Minuto"],
-                        'text': 'Frecuencia_Cardiaca_Minuto',
-                        'name': 'Frecuencia Cardiaca Minuto',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Resting_HeartRate"],
-                        'text': 'Resting_HeartRate',
-                        'name': 'Resting_HeartRate',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Eficiencia_Sueno"],
-                        'text': 'Eficiencia_Sueno',
-                        'name': 'Eficiencia_Sueno',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Peso"],
-                        'text': 'Peso',
-                        'name': 'Peso',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Hijos"],
-                        'text': 'Hijos',
-                        'name': 'Hijos',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Tiempo_Plaza"],
-                        'text': 'Tiempo_Plaza',
-                        'name': 'Tiempo_Plaza',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Tiempo_Vida_Laboral"],
-                        'text': 'Tiempo_Vida_Laboral',
-                        'name': 'Tiempo_Vida_Laboral',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Max_HeartRate"],
-                        'text': 'Max_HeartRate',
-                        'name': 'Max_HeartRate',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Min_HeartRate"],
-                        'text': 'Min_HeartRate',
-                        'name': 'Min_HeartRate',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["Minutos_Rem"],
-                        'text': 'Minutos_Rem',
-                        'name': 'Minutos_Rem',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },{
-                        "x": dff["Burnout"],
-                        "y": dff["SuenoProfundo"],
-                        'text': 'SuenoProfundo',
-                        'name': 'SuenoProfundo',
-                        'mode': 'markers',
-                        'marker': {'size': 16}
-                    },
-                ],
-                'layout': {
-                    'clickmode': 'event+select'
-                }
-            }
+                figure={
+                   "data": [
+                       {
+                           "x": dff["Importancia"],
+                           "y": dff["Caracteristicas"],
+                           'mode': 'markers',
+                           'marker': {'size': 10}
+                       }
+                   ],
+                   "layout": {
+                       "xaxis": {"automargin": True},
+                       "yaxis": {
+                           "automargin": True
+                       },
+                       "height": 300,
+                       "margin": {"t": 50, "l": 50, "r": 50},
+                   },
+               },
         )
     ]
-
 
 @app.callback(
     Output('datatable-interactivity-container2', "children"),
@@ -595,6 +520,181 @@ def update_graphs3(rows, derived_virtual_selected_rows):
        # for column in ["Cansancio_Emocional","Despersonalizacion","Realizacion_Personal"] if column in dff
     ]
 
+@app.callback(
+    Output('datatable-interactivity-container13', "children"),
+    [Input('datatable-interactivity13', "derived_virtual_data"),
+     Input('datatable-interactivity13', "derived_virtual_selected_rows")])
+def update_graphs3(rows, derived_virtual_selected_rows):
+    # When the table is first rendered, `derived_virtual_data` and
+    # `derived_virtual_selected_rows` will be `None`. This is due to an
+    # idiosyncracy in Dash (unsupplied properties are always None and Dash
+    # calls the dependent callbacks when the component is first rendered).
+    # So, if `rows` is `None`, then the component was just rendered
+    # and its value will be the same as the component's dataframe.
+    # Instead of setting `None` in here, you could also set
+    # `derived_virtual_data=df.to_rows('dict')` when you initialize
+    # the component.
+    if derived_virtual_selected_rows is None:
+        derived_virtual_selected_rows = []
+
+    dff = query.df_Tipo_Trabajo if rows is None else pd.DataFrame(rows)
+
+    colors = ['#7FDBFF' if i in derived_virtual_selected_rows else '#0074D9'
+              for i in range(len(dff))]
+
+    return [
+        html.Br(),
+        dcc.Graph(
+            id=32,
+            figure={
+                "data": [
+                    {
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Calorias"],
+                        "type": "bar",
+                        "marker": {"color": colors},
+                        "name": "Calorias",
+                    },
+                    {
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Frecuencia_Cardiaca_Minuto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name":"Frecuencia_Cardiaca_Minuto",
+                    },
+                    {
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Resting_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    },
+                    {
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Eficiencia_Sueno"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Eficiencia_Sueno",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Peso"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Peso",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Hijos"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Hijos",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Tiempo_Plaza"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Plaza",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Tiempo_Vida_Laboral"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_Vida_Laboral",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Max_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Max_HeartRate",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Min_HeartRate"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_HeartRate",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Minutos_Rem"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_Rem",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "SuenoProfundo",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Min_SuenoProfundo"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoProfundo",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Min_SuenoLigero"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_SuenoLigero",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Minutos_SuenoDespierto"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Minutos_SuenoDespierto",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Min_Dormido"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Dormido",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Min_Despierto_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Min_Despierto_enCama",
+                    },{
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Tiempo_enCama"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Tiempo_enCama",
+                    }
+                    , {
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Cansancio_Emocional"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Cansancio_Emocional",
+                    }, {
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Despersonalizacion"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Despersonalizacion",
+                    }, {
+                        "x": dff["Tipo_Trabajo"],
+                        "y": dff["Realizacion_Personal"],
+                        "type": "bar",
+                        "marker": {"color": color},
+                        "name": "Realizacion_Personal",
+                    }
+                ],
+                "layout": {
+                    "xaxis": {"automargin": True},
+                    "yaxis": {
+                        "automargin": True
+                    },
+                    "height": 300,
+                    "margin": {"t": 50, "l": 50, "r": 50},
+                },
+            },
+        ),
+        # check if column exists - user may have deleted it
+        #If `column.deletable=False`, then you don't
+        # need to do this check.
+       # for column in ["Cansancio_Emocional","Despersonalizacion","Realizacion_Personal"] if column in dff
+    ]
 
 @app.callback(
     Output('datatable-interactivity-container5', "children"),
