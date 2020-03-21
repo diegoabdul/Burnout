@@ -7,8 +7,8 @@ sqlContext = SQLContext(sc)
 
 def DataPreparation():
     spark = SparkSession.builder.appName('SistemaDeDeteccion').getOrCreate()
-    data = spark.read.csv("/Burnout_Data.csv",header=True, inferSchema=True)
-    data = data.select('Tiempo_PlazaActual','EstadoCivil','Burnout_Antes','Hora_Social','Horas_Cuidados','Resting_HeartRate','Calorias','Frecuencia_Cardiaca_Minuto','Peso','Contrato_Adjunto','Musica','Sexo','Estudias','Sales_Social','Edad','Estado_Animo','Cantidad_Sueno_Profundo','Tiempo_Vida_Laboral','Hijos','Lectura','Minutos_Dormido')
+    data = spark.read.csv("Burnout_Data.csv",header=True, inferSchema=True)
+    data = data.select('Tiempo_PlazaActual','EstadoCivil','Burnout_Antes','Hora_Social','Horas_Cuidados','Calorias','Peso','Contrato_Adjunto','Musica','Sexo','Estudias','Sales_Social','Edad','Estado_Animo','Tiempo_Vida_Laboral','Hijos','Lectura','Hora_Gratificante','Horas_Activ_Fisica')
     cols = data.columns
 
     from pyspark.ml.feature import OneHotEncoderEstimator, StringIndexer, VectorAssembler
@@ -22,7 +22,7 @@ def DataPreparation():
     label_stringIdx = StringIndexer(inputCol="Burnout_Antes", outputCol="label")
     stages += [label_stringIdx.setHandleInvalid("keep")]
 
-    numericCols = ['Tiempo_PlazaActual','Hora_Social','Horas_Cuidados','Resting_HeartRate','Calorias','Frecuencia_Cardiaca_Minuto','Peso','Cantidad_Sueno_Profundo','Tiempo_Vida_Laboral','Hijos','Minutos_Dormido']
+    numericCols = ['Tiempo_PlazaActual','Hora_Social','Horas_Cuidados','Calorias','Peso','Tiempo_Vida_Laboral','Hijos','Hora_Gratificante','Horas_Activ_Fisica']
     assemblerInputs = [c + "classVec" for c in categoricalColumns] + numericCols
     assembler = VectorAssembler(inputCols=assemblerInputs, outputCol="features")
     stages += [assembler.setHandleInvalid("keep")]
@@ -31,20 +31,20 @@ def DataPreparation():
     pipeline = Pipeline(stages = stages)
     pipelineModel = pipeline.fit(data)
     data = pipelineModel.transform(data)
-    path = 'modelo_Pipeline'
-    os.mkdir(path)
-    pipelineModel.save(os.path.join(path, 'Pipeline'))
+    #path = 'modelo_Pipeline'
+    #os.mkdir(path)
+    #pipelineModel.save(os.path.join(path, 'Pipeline'))
     selectedCols = ['label', 'features'] + cols
     data = data.select(selectedCols)
 
-    train, test = data.randomSplit([0.7, 0.3])
+    train, test = data.randomSplit([0.8, 0.2])
     print("Training Dataset Count: " + str(train.count()))
     print("Test Dataset Count: " + str(test.count()))
     return train,test
 
 def LogisticRegression(train,test):
     from pyspark.ml.classification import LogisticRegression
-    lr = LogisticRegression(featuresCol = 'features', labelCol = 'label', maxIter=1000)
+    lr = LogisticRegression(featuresCol = 'features', labelCol = 'label', maxIter=1000,elasticNetParam=0.2,fitIntercept=False,threshold=1)
     lrModel = lr.fit(train)
     path = 'modelo_LogisticRegression'
     os.mkdir(path)
@@ -59,7 +59,7 @@ def LogisticRegression(train,test):
 
 def RandomForest(train,test):
     from pyspark.ml.classification import RandomForestClassifier
-    rf = RandomForestClassifier(featuresCol='features', labelCol='label')
+    rf = RandomForestClassifier(featuresCol='features', labelCol='label',numTrees=36,featureSubsetStrategy="all")
     rfModel = rf.fit(train)
     path = 'modelo_RandomForest'
     os.mkdir(path)
@@ -73,49 +73,33 @@ def RandomForest(train,test):
 
 def GradientBoostedTree(train,test):
     from pyspark.ml.classification import GBTClassifier
-    gbt = GBTClassifier(maxIter=10)
+    gbt = GBTClassifier(maxIter=100,lossType="logistic",stepSize=0.99,featureSubsetStrategy='all')
     gbtModel = gbt.fit(train)
+    path = 'modelo_GradientBoosted'
+    os.mkdir(path)
+    gbtModel.save(os.path.join(path, 'modelGradientBoosted'))
     predictions = gbtModel.transform(test)
     predictions.select('Burnout_Antes', 'label', 'rawPrediction', 'prediction', 'probability').show(10)
     from pyspark.ml.evaluation import BinaryClassificationEvaluator
     evaluator = BinaryClassificationEvaluator()
-    print("Test Area Under ROC: " + str(evaluator.evaluate(predictions, {evaluator.metricName: "areaUnderROC"})))
-    from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
-    paramGrid = (ParamGridBuilder()
-                 .addGrid(gbt.maxDepth, [2, 4, 6])
-                 .addGrid(gbt.maxBins, [20, 60])
-                 .addGrid(gbt.maxIter, [10, 20])
-                 .build())
-    cv = CrossValidator(estimator=gbt, estimatorParamMaps=paramGrid, evaluator=evaluator, numFolds=5)
-    cvModel = cv.fit(train)
-    path = 'modelo_GradientBoosted'
-    os.mkdir(path)
-    cvModel.save(os.path.join(path, 'modelGradientBoosted'))
-    predictions = cvModel.transform(test)
     print('Test Area Under ROC', evaluator.evaluate(predictions))
 
-def Perceptron(train,test):
-    from pyspark.ml.classification import MultilayerPerceptronClassifier
-    from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-    # create the trainer and set its parameters
-    trainer = MultilayerPerceptronClassifier(maxIter=100, layers=None)
-    # train the model
-    model = trainer.fit(train)
-    # compute accuracy on the test set
-    result = model.transform(test)
-    predictionAndLabels = result.select("prediction", "label")
-    evaluator = MulticlassClassificationEvaluator(metricName="accuracy")
-    path = 'modelo_Perceptron'
+def Isotonic(train,test):
+    from pyspark.ml.regression import IsotonicRegression
+    iso = IsotonicRegression(featuresCol='features', labelCol='label')
+    isoModel = iso.fit(train)
+    path = 'modelo_IsotonicRegression'
     os.mkdir(path)
-    model.save(os.path.join(path, 'modelPerceptron'))
-    print("Test set accuracy = " + str(evaluator.evaluate(predictionAndLabels)))
+    isoModel.save(os.path.join(path, 'modelIsotonicRegression'))
+    predictions = isoModel.transform(test)
+    predictions.select('Burnout_Antes', 'label', 'prediction').show(10)
 
 
 train,test = DataPreparation()
 LogisticRegression(train,test)
 RandomForest(train,test)
 GradientBoostedTree(train,test)
-Perceptron(train,test)
+Isotonic(train,test)
 
 
 

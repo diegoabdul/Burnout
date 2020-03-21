@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1584191300709,"sparkVersion":"2.4.5","uid":"StringIndexer_b87f817002ba","paramMap":{"inputCol":"EstadoCivil","handleInvalid":"keep","outputCol":"EstadoCivilIndex"},"defaultParamMap":{"stringOrderType":"frequencyDesc","handleInvalid":"error","outputCol":"StringIndexer_b87f817002ba__output"}}

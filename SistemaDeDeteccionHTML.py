@@ -82,11 +82,11 @@ SistemaDeDeteccion = dbc.Container(
                                     ],
                                 ),
 
-                                dbc.Label("Frecuencia Cardiaca por Minuto"),#Frecuencia_Cardiaca_Minuto
-                                dbc.Input(id="Frecuencia_Cardiaca_Minuto", type="number", value=""),
+                                dbc.Label("Horas al mes Gratificantes"),#Frecuencia_Cardiaca_Minuto
+                                dbc.Input(id="Hora_Gratificante", type="number", value=""),
 
-                                dbc.Label("Frecuencia Cardiaca en Descanso por Minuto"),#Resting_HeartRate
-                                dbc.Input(id="Resting_HeartRate", type="number", value=""),
+                                dbc.Label("Horas al mes que dedica a Actividades Fisicas"),#Resting_HeartRate
+                                dbc.Input(id="Horas_Activ_Fisica", type="number", value=""),
 
                                 dbc.Label("Calorias quemadas al día"),#Calorias
                                 dbc.Input(id="Calorias", type="number", value=""),
@@ -103,9 +103,6 @@ SistemaDeDeteccion = dbc.Container(
                                 dbc.Label("Años de Vida Laboral"),#Tiempo_Vida_Laboral
                                 dbc.Input(id="Tiempo_Vida_Laboral", type="number", value=""),
 
-                                dbc.Label("Horas de Sueño al día"),#Minutos_Dormido
-                                dbc.Input(id="Minutos_Dormido", type="number", value=""),
-
                                 dbc.Label("Estado de Ánimo", html_for="dropdown"),#Minutos_Dormido
                                 dcc.Dropdown(id="Estado_Animo", options=[
                                     {"label": "Triste", "value": "triste"},
@@ -113,9 +110,6 @@ SistemaDeDeteccion = dbc.Container(
                                     {"label": "Normal", "value": "normal"},
                                 ],
                                 ),
-
-                                dbc.Label("Cantidad de Rem"),#Minutos_Dormido
-                                dbc.Input(id="Cantidad_Sueno_Profundo", type="number", value=""),
                                 html.Br(),
                                 dbc.Button("Ver Evaluación",id='submit-button', color="primary", className="mr-1"),
                                 html.Br(),

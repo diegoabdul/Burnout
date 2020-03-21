@@ -1865,21 +1865,32 @@ def check_edad(edad):
                   [Input('submit-button', 'n_clicks')],
                   [State('nombre', 'value'),State('email-input', 'value'),State('Sexo', 'value'),State('edad', 'value'),State('peso', 'value'),
                    State('hijos', 'value'),State('EstadoCivil', 'value'),State('Contrato_Adjunto', 'value'),State('Musica', 'value'),
-                   State('Estudio', 'value'),State('Sales_Social', 'value'),State('Lectura', 'value'),State('Frecuencia_Cardiaca_Minuto', 'value'),
-                   State('Resting_HeartRate', 'value'),State('Calorias', 'value'),State('Tiempo_PlazaActual', 'value'),State('Hora_Social', 'value'),
-                   State('Horas_Cuidados', 'value'),State('Tiempo_Vida_Laboral', 'value'),State('Minutos_Dormido', 'value'),State('Estado_Animo', 'value'),State('Cantidad_Sueno_Profundo', 'value')
+                   State('Estudio', 'value'),State('Sales_Social', 'value'),State('Lectura', 'value'),State('Hora_Gratificante', 'value'),
+                   State('Horas_Activ_Fisica', 'value'),State('Calorias', 'value'),State('Tiempo_PlazaActual', 'value'),State('Hora_Social', 'value'),
+                   State('Horas_Cuidados', 'value'),State('Tiempo_Vida_Laboral', 'value'),State('Estado_Animo', 'value'),
                    ]
               )
 
-def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Frecuencia_Cardiaca_Minuto,Resting_HeartRate,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Minutos_Dormido,Estado_Animo,Cantidad_Sueno_Profundo):
+def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Hora_Gratificante,Horas_Activ_Fisica,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Estado_Animo):
     if clicks is not None:
-        print(nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Frecuencia_Cardiaca_Minuto,Resting_HeartRate,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Minutos_Dormido,Estado_Animo,Cantidad_Sueno_Profundo)
-        df = pd.DataFrame({'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)], 'Hijos': [float(hijos)], 'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica], 'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura], 'Frecuencia_Cardiaca_Minuto': [float(Frecuencia_Cardiaca_Minuto)], 'Resting_HeartRate': [float(Resting_HeartRate)], 'Calorias': [float(Calorias)], 'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)], 'Horas_Cuidados': [float(Horas_Cuidados)], 'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Minutos_Dormido': [float(Minutos_Dormido)], 'Estado_Animo': [Estado_Animo], 'Cantidad_Sueno_Profundo': [float(Cantidad_Sueno_Profundo)]})
+        print(nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Hora_Gratificante,Horas_Activ_Fisica,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Estado_Animo)
+        df = pd.DataFrame({'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)], 'Hijos': [float(hijos)], 'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica], 'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura], 'Hora_Gratificante': [float(Hora_Gratificante)], 'Horas_Activ_Fisica': [float(Horas_Activ_Fisica)], 'Calorias': [float(Calorias)], 'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)], 'Horas_Cuidados': [float(Horas_Cuidados)], 'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
         data=Clasificacion.DataPreparation(df)
-        prediccion,probabilidad=Clasificacion.LinearEvaluation(data)
-        prediccion2, probabilidad2 = Clasificacion.RandomForest(data)
-        #prediccion3,probabilidad3 = Clasificacion.GradientTree(data)
-    return '{} Tu evaluación es: {} y la probabilidad es: {} Para el algoritmo de Regresión Lineal'.format(nombre,prediccion,probabilidad),'\n Tu evaluación es: {} y la probabilidad es: {} Para el algoritmo de Random Forest '.format(prediccion2,probabilidad2)
+        prediccionLinear,probabilidadLinear=Clasificacion.LinearEvaluation(data)
+        prediccionRandom, probabilidadRandom = Clasificacion.RandomForest(data)
+        prediccionGradient,probabilidadGradient = Clasificacion.GradientTree(data)
+        prediccionIsotonic,labelIsotonic  = Clasificacion.Isotonic(data)
+        if labelIsotonic == prediccionRandom:
+            respuesta = prediccionRandom
+        if labelIsotonic == prediccionLinear:
+            respuesta = prediccionLinear
+        if labelIsotonic == prediccionGradient:
+            respuesta = prediccionGradient
+        print(prediccionLinear + ' ' + str(probabilidadLinear) + ' Logistic Regresion')
+        print(prediccionRandom + ' ' + str(probabilidadRandom) + ' Random Forest ')
+        print(prediccionGradient + ' ' + str(probabilidadGradient) + ' Gradient ')
+        print(labelIsotonic + ' Isotonic ')
+    return '{} Tu evaluación es: {} '.format(nombre,respuesta)
 
 
 if __name__ == '__main__':

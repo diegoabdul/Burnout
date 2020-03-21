@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1584191299077,"sparkVersion":"2.4.5","uid":"StringIndexer_d8e2555a717c","paramMap":{"outputCol":"EdadIndex","handleInvalid":"keep","inputCol":"Edad"},"defaultParamMap":{"stringOrderType":"frequencyDesc","handleInvalid":"error","outputCol":"StringIndexer_d8e2555a717c__output"}}

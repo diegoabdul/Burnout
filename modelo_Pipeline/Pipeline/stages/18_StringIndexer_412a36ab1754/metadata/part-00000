@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1584711728750,"sparkVersion":"2.4.5","uid":"StringIndexer_412a36ab1754","paramMap":{"outputCol":"label","inputCol":"Burnout_Antes","handleInvalid":"keep"},"defaultParamMap":{"stringOrderType":"frequencyDesc","outputCol":"StringIndexer_412a36ab1754__output","handleInvalid":"error"}}

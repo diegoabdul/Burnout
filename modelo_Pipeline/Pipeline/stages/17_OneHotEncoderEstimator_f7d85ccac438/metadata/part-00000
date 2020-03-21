@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.OneHotEncoderModel","timestamp":1584711728483,"sparkVersion":"2.4.5","uid":"OneHotEncoderEstimator_f7d85ccac438","paramMap":{"outputCols":["EstadoCivilclassVec"],"inputCols":["EstadoCivilIndex"]},"defaultParamMap":{"dropLast":true,"handleInvalid":"error"}}

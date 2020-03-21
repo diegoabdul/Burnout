@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.OneHotEncoderModel","timestamp":1584191298795,"sparkVersion":"2.4.5","uid":"OneHotEncoderEstimator_f904f6cb2e0e","paramMap":{"outputCols":["Sales_SocialclassVec"],"inputCols":["Sales_SocialIndex"]},"defaultParamMap":{"dropLast":true,"handleInvalid":"error"}}

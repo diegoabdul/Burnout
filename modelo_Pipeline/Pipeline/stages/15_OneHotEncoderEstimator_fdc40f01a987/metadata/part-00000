@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.OneHotEncoderModel","timestamp":1584711727958,"sparkVersion":"2.4.5","uid":"OneHotEncoderEstimator_fdc40f01a987","paramMap":{"inputCols":["LecturaIndex"],"outputCols":["LecturaclassVec"]},"defaultParamMap":{"handleInvalid":"error","dropLast":true}}
