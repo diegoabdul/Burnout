@@ -10,7 +10,11 @@ Subescalas = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Burnout por Subescalas"),
+                        html.H4("Burnout por Subescalas"),
+                        html.P(
+                            "En este apartado de datos categorizados, mostramos las subescalas del Burnout."),
+                        html.P(
+                            "Son datos detallados por lo que están pensados para personas expertas en el tema. Para que les sirva en posteriores estudios."),
                         dash_table.DataTable(
                             id='datatable-interactivity2',
                             columns=[

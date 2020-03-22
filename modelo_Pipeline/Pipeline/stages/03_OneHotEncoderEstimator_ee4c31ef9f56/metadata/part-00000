@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.OneHotEncoderModel","timestamp":1584711722633,"sparkVersion":"2.4.5","uid":"OneHotEncoderEstimator_ee4c31ef9f56","paramMap":{"outputCols":["MusicaclassVec"],"inputCols":["MusicaIndex"]},"defaultParamMap":{"handleInvalid":"error","dropLast":true}}

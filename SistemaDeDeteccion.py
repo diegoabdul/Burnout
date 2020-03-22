@@ -7,7 +7,7 @@ sqlContext = SQLContext(sc)
 
 def DataPreparation():
     spark = SparkSession.builder.appName('SistemaDeDeteccion').getOrCreate()
-    data = spark.read.csv("Burnout_Data.csv",header=True, inferSchema=True)
+    data = spark.read.csv("/Burnout_Data.csv",header=True, inferSchema=True)
     data = data.select('Tiempo_PlazaActual','EstadoCivil','Burnout_Antes','Hora_Social','Horas_Cuidados','Calorias','Peso','Contrato_Adjunto','Musica','Sexo','Estudias','Sales_Social','Edad','Estado_Animo','Tiempo_Vida_Laboral','Hijos','Lectura','Hora_Gratificante','Horas_Activ_Fisica')
     cols = data.columns
 
@@ -31,25 +31,24 @@ def DataPreparation():
     pipeline = Pipeline(stages = stages)
     pipelineModel = pipeline.fit(data)
     data = pipelineModel.transform(data)
-    #path = 'modelo_Pipeline'
-    #os.mkdir(path)
-    #pipelineModel.save(os.path.join(path, 'Pipeline'))
+    path = 'modelo_Pipeline'
+    os.mkdir(path)
+    pipelineModel.save(os.path.join(path, 'Pipeline'))
     selectedCols = ['label', 'features'] + cols
     data = data.select(selectedCols)
 
-    train, test = data.randomSplit([0.8, 0.2])
+    train, test = data.randomSplit([0.7, 0.3])
     print("Training Dataset Count: " + str(train.count()))
     print("Test Dataset Count: " + str(test.count()))
     return train,test
 
 def LogisticRegression(train,test):
     from pyspark.ml.classification import LogisticRegression
-    lr = LogisticRegression(featuresCol = 'features', labelCol = 'label', maxIter=1000,elasticNetParam=0.2,fitIntercept=False,threshold=1)
+    lr = LogisticRegression(featuresCol = 'features', labelCol = 'label', maxIter=100000,elasticNetParam=0.5,fitIntercept=True,threshold=0.5)
     lrModel = lr.fit(train)
     path = 'modelo_LogisticRegression'
     os.mkdir(path)
     lrModel.save(os.path.join(path, 'modelLogisticRegression'))
-
     predictions = lrModel.transform(test)
     predictions.select('Burnout_Antes', 'label', 'rawPrediction', 'prediction', 'probability').show(10)
 
@@ -59,7 +58,7 @@ def LogisticRegression(train,test):
 
 def RandomForest(train,test):
     from pyspark.ml.classification import RandomForestClassifier
-    rf = RandomForestClassifier(featuresCol='features', labelCol='label',numTrees=36,featureSubsetStrategy="all")
+    rf = RandomForestClassifier(featuresCol='features', labelCol='label',numTrees=100000,featureSubsetStrategy="auto")
     rfModel = rf.fit(train)
     path = 'modelo_RandomForest'
     os.mkdir(path)
@@ -71,14 +70,14 @@ def RandomForest(train,test):
     evaluator = BinaryClassificationEvaluator()
     print('Test Area Under ROC', evaluator.evaluate(predictions))
 
-def GradientBoostedTree(train,test):
-    from pyspark.ml.classification import GBTClassifier
-    gbt = GBTClassifier(maxIter=100,lossType="logistic",stepSize=0.99,featureSubsetStrategy='all')
-    gbtModel = gbt.fit(train)
-    path = 'modelo_GradientBoosted'
+def DecisionTree(train,test):
+    from pyspark.ml.classification import DecisionTreeClassifier
+    DecisionTree = DecisionTreeClassifier(featuresCol='features', labelCol='label',maxDepth=30,minInfoGain=0.4)
+    TreeModel = DecisionTree.fit(train)
+    path = 'modelo_DecisionTree'
     os.mkdir(path)
-    gbtModel.save(os.path.join(path, 'modelGradientBoosted'))
-    predictions = gbtModel.transform(test)
+    TreeModel.save(os.path.join(path, 'modelDecisionTree'))
+    predictions = TreeModel.transform(test)
     predictions.select('Burnout_Antes', 'label', 'rawPrediction', 'prediction', 'probability').show(10)
     from pyspark.ml.evaluation import BinaryClassificationEvaluator
     evaluator = BinaryClassificationEvaluator()
@@ -98,7 +97,7 @@ def Isotonic(train,test):
 train,test = DataPreparation()
 LogisticRegression(train,test)
 RandomForest(train,test)
-GradientBoostedTree(train,test)
+DecisionTree(train,test)
 Isotonic(train,test)
 
 

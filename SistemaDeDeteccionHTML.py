@@ -4,17 +4,30 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 
 SistemaDeDeteccion = dbc.Container(
-    [
+    [html.Div(
+    [dbc.Modal(
+            [
+                dbc.ModalHeader("Tu Evaluación"),
+                #html.Div(id='output_div'),
+                dbc.ModalBody(html.Div(id='output_div')),
+                dbc.ModalFooter('Click fuera de este recuadro para salir'),
+            ],
+            id="modal",
+        ),
+    ]
+),
         dbc.Row(
             [
                 dbc.Col(
                     [
-                        html.H2("Sistema de Detección"),
+                        html.H4("Sistema de Detección"),
+                        html.P("Bienvenidos al Sistema de Detección de Burnout."),
+                        html.P("Mediante este pequeño formulario, podrás saber si padeces del síndrome de Burnout instantáneamente."),
                         dbc.FormGroup(
                             [
                                 dbc.Label("Nombre"),
                                 dbc.Input(id="nombre", type="text", value=""),
-                                dbc.Label("Email"),
+                                dbc.Label("Correo Electrónico"),
                                 dbc.Input(id="email-input", type="email", value=""),
                                 dbc.Label("Sexo", html_for="example-radios-row", width=4),
                                 dbc.Col(
@@ -29,7 +42,7 @@ SistemaDeDeteccion = dbc.Container(
                                 ),
                                 dbc.Label("Edad"),
                                 dbc.Input(id="edad", type="number", value=""),
-                                dbc.Label("Peso"),
+                                dbc.Label("Peso en Kilos"),
                                 dbc.Input(id="peso", type="number", value=""),
                                 dbc.Label("Numero de Hijos"),
                                 dbc.Input(id="hijos", type="number", value=""),
@@ -51,14 +64,15 @@ SistemaDeDeteccion = dbc.Container(
                                     ],
                                 ),
 
-                               dbc.Label("Frecuencia de Musica", html_for="dropdown"), #Musica
+                                html.P('¿Con qué frecuencia escuchas música?'),
                                 dcc.Dropdown(id="Musica",options=[
                                         {"label": "Habitualmente", "value": "habitualmente"},
                                         {"label": "Ocasionalmente", "value": "ocasionalmente"},
                                         {"label": "Nunca", "value": "nunca"},
                                     ],
                                 ),
-                                dbc.Label("Frecuencia de Estudio", html_for="dropdown"), #Estudio
+
+                                html.P('¿Con qué frecuencia estudias?'),
                                 dcc.Dropdown(id="Estudio",options=[
                                         {"label": "Habitualmente", "value": "habitualmente"},
                                         {"label": "Ocasionalmente", "value": "ocasionalmente"},
@@ -66,7 +80,7 @@ SistemaDeDeteccion = dbc.Container(
                                     ],
                                 ),
 
-                                dbc.Label("Frecuencia de Salida Socialmente", html_for="dropdown"), #Sales_Social
+                                html.P('¿Con qué frecuencia tienes salidas sociales, con amigos, familaires, compañeros de trabajo?'),
                                 dcc.Dropdown(id="Sales_Social",options=[
                                         {"label": "Habitualmente", "value": "habitualmente"},
                                         {"label": "Ocasionalmente", "value": "ocasionalmente"},
@@ -74,7 +88,7 @@ SistemaDeDeteccion = dbc.Container(
                                     ],
                                 ),
 
-                                dbc.Label("Frecuencia de Lectura", html_for="dropdown"), #Lectura
+                                html.P('¿Con qué frecuencia lees, al menos una lectura de 1 hora?'),
                                 dcc.Dropdown(id="Lectura",options=[
                                         {"label": "Habitualmente", "value": "habitualmente"},
                                         {"label": "Ocasionalmente", "value": "ocasionalmente"},
@@ -82,38 +96,38 @@ SistemaDeDeteccion = dbc.Container(
                                     ],
                                 ),
 
-                                dbc.Label("Horas al mes Gratificantes"),#Frecuencia_Cardiaca_Minuto
+                                html.P('¿Cuántas horas dedicas al mes en actividades que te hagan feliz como un pasatiempo?'),
                                 dbc.Input(id="Hora_Gratificante", type="number", value=""),
 
-                                dbc.Label("Horas al mes que dedica a Actividades Fisicas"),#Resting_HeartRate
+                                html.P('¿Cuántas horas dedicas al mes haciendo ejercicio o algún deporte?'),
                                 dbc.Input(id="Horas_Activ_Fisica", type="number", value=""),
 
-                                dbc.Label("Calorias quemadas al día"),#Calorias
+                                html.P('¿Cuántas calorías quemas al día? -  La estimación es entre 400 - 600 Kcal en reposo'),
                                 dbc.Input(id="Calorias", type="number", value=""),
 
-                                dbc.Label("Tiempo en años en el Trabajo Actual"),#Tiempo_PlazaActual
+                                html.P('¿Cuatos años llevas en la empresa que trabajas actualmente?'),
                                 dbc.Input(id="Tiempo_PlazaActual", type="number", value=""),
 
-                                dbc.Label("Horas al Mes que se dedican a Salidas Sociales"),#Hora_Social
+                                html.P('¿Cuantas horas dedicas a salidas sociales en el mes?'),
                                 dbc.Input(id="Hora_Social", type="number", value=""),
 
-                                dbc.Label("Horas al Mes que se dedican a Cuidados Personales"),#Horas_Cuidados
+                                html.P('¿Cuantas horas dedicas a cuidarte?'),
                                 dbc.Input(id="Horas_Cuidados", type="number", value=""),
 
-                                dbc.Label("Años de Vida Laboral"),#Tiempo_Vida_Laboral
+                                html.P('¿Cuantos años llevas en general trabajando?'),
                                 dbc.Input(id="Tiempo_Vida_Laboral", type="number", value=""),
 
-                                dbc.Label("Estado de Ánimo", html_for="dropdown"),#Minutos_Dormido
+                                html.P('¿Como dirías que es tu estado de ánimo?'),
                                 dcc.Dropdown(id="Estado_Animo", options=[
                                     {"label": "Triste", "value": "triste"},
                                     {"label": "Contento", "value": "contento"},
                                     {"label": "Normal", "value": "normal"},
+                                    {"label": "N/A", "value": "null"},
                                 ],
                                 ),
                                 html.Br(),
                                 dbc.Button("Ver Evaluación",id='submit-button', color="primary", className="mr-1"),
                                 html.Br(),
-                                html.Div(id='output_div'),
                             ]
                         )
                     ],

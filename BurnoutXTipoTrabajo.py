@@ -10,7 +10,12 @@ BurnoutXTipoTrabajo = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Burnout por Tipo Trabajo"),
+                        html.H4("Burnout por Área de Trabajo"),
+                        html.P(
+                            "En este apartado de datos categorizados, mostramos los datos fisiologícos dependiendo del área de trabajo del paciente."),
+                        html.P(
+                            "Son datos detallados por lo que están pensados para personas expertas en el tema. Para que les sirva en posteriores estudios."),
+
                         dash_table.DataTable(
                             id='datatable-interactivity13',
                             columns=[

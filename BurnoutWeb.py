@@ -36,8 +36,8 @@ styles = {
     }
 }
 
-
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+BS = "https://bootswatch.com/4/flatly/bootstrap.min.css"
+app = dash.Dash(external_stylesheets=[BS])
 app.config.suppress_callback_exceptions = True
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -129,7 +129,10 @@ def update_graphs(rows, derived_virtual_selected_rows):
                        "height": 300,
                        "margin": {"t": 50, "l": 50, "r": 50},
                    },
+
                },
+            animate=True,
+            animation_options={ 'frame': { 'redraw': 'false', }, 'transition': { 'duration': 750, 'ease': 'cubic-in-out', }, },
         )
     ]
 
@@ -156,7 +159,11 @@ def update_graphs2(rows, derived_virtual_selected_rows):
               for i in range(len(dff))]
 
     return [html.Br(),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
+        html.Br(),
         html.H5("Primera Encuesta de Burnout"),
+        html.P("En esta primera gráfica observamos los datos recogidos en la primera encuesta"),
         dcc.Graph(
             id=12,
             figure={
@@ -195,6 +202,7 @@ def update_graphs2(rows, derived_virtual_selected_rows):
         ),
         html.Br(),
         html.H5("Segunda Encuesta de Burnout"),
+        html.P("En esta primera gráfica observamos los datos recogidos en la segunda encuesta"),
         dcc.Graph(
             id=22,
             figure={
@@ -261,7 +269,11 @@ def update_graphs3(rows, derived_virtual_selected_rows):
 
     return [
         html.Br(),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
+        html.Br(),
         html.H5("Primera Encuesta de Burnout"),
+        html.P("En esta primera gráfica observamos los datos recogidos en la primera encuesta por paciente"),
         dcc.Graph(
             id=3,
             figure={
@@ -307,6 +319,7 @@ def update_graphs3(rows, derived_virtual_selected_rows):
         ),
         html.Br(),
         html.H5("Segunda Encuesta de Burnout"),
+        html.P("En esta primera gráfica observamos los datos recogidos en la segunda encuesta por paciente"),
         dcc.Graph(
             id=4,
             figure={
@@ -380,7 +393,8 @@ def update_graphs3(rows, derived_virtual_selected_rows):
 
     return [
         html.Br(),
-        html.H5("Primera Encuesta de Burnout"),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
         dcc.Graph(
             id=31,
             figure={
@@ -557,6 +571,8 @@ def update_graphs3(rows, derived_virtual_selected_rows):
 
     return [
         html.Br(),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
         dcc.Graph(
             id=32,
             figure={
@@ -733,7 +749,8 @@ def update_graphs3(rows, derived_virtual_selected_rows):
 
     return [
         html.Br(),
-        html.H5("Primera Encuesta de Burnout"),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
         dcc.Graph(
             id=31,
             figure={
@@ -909,7 +926,8 @@ def update_graphs3(rows, derived_virtual_selected_rows):
 
     return [
         html.Br(),
-        html.H5("Primera Encuesta de Burnout"),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
         dcc.Graph(
             id=31,
             figure={
@@ -1085,7 +1103,8 @@ def update_graphs3(rows, derived_virtual_selected_rows):
 
     return [
         html.Br(),
-        html.H5("Primera Encuesta de Burnout"),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
         dcc.Graph(
             id=31,
             figure={
@@ -1261,7 +1280,8 @@ def update_graphs3(rows, derived_virtual_selected_rows):
 
     return [
         html.Br(),
-        html.H5("Primera Encuesta de Burnout"),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
         dcc.Graph(
             id=31,
             figure={
@@ -1437,7 +1457,8 @@ def update_graphs3(rows, derived_virtual_selected_rows):
 
     return [
         html.Br(),
-        html.H5("Primera Encuesta de Burnout"),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
         dcc.Graph(
             id=31,
             figure={
@@ -1613,7 +1634,8 @@ def update_graphs3(rows, derived_virtual_selected_rows):
 
     return [
         html.Br(),
-        html.H5("Primera Encuesta de Burnout"),
+        html.H5("¡Es un gráfico dinámico!"),
+        html.P("Siéntete libre de hacer zoom, seleccionar variables, filtrar en la tabla superior."),
         dcc.Graph(
             id=31,
             figure={
@@ -1861,7 +1883,7 @@ def check_edad(edad):
         return is_gmail, not is_gmail
     return False, False
 
-@app.callback(Output('output_div', 'children'),
+@app.callback([Output('output_div', 'children'),Output("modal", "is_open")],
                   [Input('submit-button', 'n_clicks')],
                   [State('nombre', 'value'),State('email-input', 'value'),State('Sexo', 'value'),State('edad', 'value'),State('peso', 'value'),
                    State('hijos', 'value'),State('EstadoCivil', 'value'),State('Contrato_Adjunto', 'value'),State('Musica', 'value'),
@@ -1878,19 +1900,15 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
         data=Clasificacion.DataPreparation(df)
         prediccionLinear,probabilidadLinear=Clasificacion.LinearEvaluation(data)
         prediccionRandom, probabilidadRandom = Clasificacion.RandomForest(data)
-        prediccionGradient,probabilidadGradient = Clasificacion.GradientTree(data)
+        prediccionDecisionTreet,probabilidadDecisionTree = Clasificacion.DecisionTree(data)
         prediccionIsotonic,labelIsotonic  = Clasificacion.Isotonic(data)
-        if labelIsotonic == prediccionRandom:
-            respuesta = prediccionRandom
-        if labelIsotonic == prediccionLinear:
-            respuesta = prediccionLinear
-        if labelIsotonic == prediccionGradient:
-            respuesta = prediccionGradient
+
         print(prediccionLinear + ' ' + str(probabilidadLinear) + ' Logistic Regresion')
         print(prediccionRandom + ' ' + str(probabilidadRandom) + ' Random Forest ')
-        print(prediccionGradient + ' ' + str(probabilidadGradient) + ' Gradient ')
+        print(prediccionDecisionTreet + ' ' + str(probabilidadDecisionTree) + ' DecisionTree ')
         print(labelIsotonic + ' Isotonic ')
-    return '{} Tu evaluación es: {} '.format(nombre,respuesta)
+
+    return '{} Tu evaluación es: {} '.format(nombre, prediccionDecisionTreet), "is_open"
 
 
 if __name__ == '__main__':

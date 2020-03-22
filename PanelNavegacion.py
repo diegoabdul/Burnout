@@ -18,7 +18,7 @@ navbar = dbc.NavbarSimple(
                 dbc.DropdownMenuItem("Burnout por Subescalas Individuales", href="/subescalasindividual"),
                 dbc.DropdownMenuItem(divider=True),
                 dbc.DropdownMenuItem("Burnout por Especialidad", href="/especialidad"),
-                dbc.DropdownMenuItem("Burnout por Tipo de Trabajo", href="/trabajo"),
+                dbc.DropdownMenuItem("Burnout por Área de Trabajo", href="/trabajo"),
                 dbc.DropdownMenuItem(divider=True),
                 dbc.DropdownMenuItem("Burnout por Sexo", href="/sexo"),
                 dbc.DropdownMenuItem(divider=True),
@@ -34,7 +34,7 @@ navbar = dbc.NavbarSimple(
         ),
         dbc.NavItem(dbc.NavLink("Descargar Dataset", href="https://storage.googleapis.com/burnout/Burnout_Data.csv"))
     ],
-    brand="Burnout",
+    brand="Burnout Study",
     #brand_external_link='https://storage.cloud.google.com/burnout/Burnout.png'
     #src='data:image/png;base64,{}'.format(encoded_image),
     brand_href="http://127.0.0.1:80/",

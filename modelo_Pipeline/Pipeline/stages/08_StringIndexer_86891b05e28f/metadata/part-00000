@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1584711725739,"sparkVersion":"2.4.5","uid":"StringIndexer_86891b05e28f","paramMap":{"outputCol":"Sales_SocialIndex","handleInvalid":"keep","inputCol":"Sales_Social"},"defaultParamMap":{"outputCol":"StringIndexer_86891b05e28f__output","handleInvalid":"error","stringOrderType":"frequencyDesc"}}

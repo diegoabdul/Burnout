@@ -48,7 +48,7 @@ bodyIndex = dbc.Container(
                         ),
                         dbc.Collapse(
                             dbc.Card([dbc.CardBody("Trastorno de Estrés Postraumático."),html.Br(),
-                            dbc.CardBody("Abuso de Alchol e incluso ideación autolítica."),html.Br(),
+                            dbc.CardBody("Abuso de Alcohol e incluso ideación autolítica."),html.Br(),
                             dbc.CardBody("Aumento de errores en el entorno laboral.")]),
                             id="collapse2",
                         ),

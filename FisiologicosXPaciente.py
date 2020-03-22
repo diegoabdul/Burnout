@@ -10,7 +10,9 @@ FisiologicosXPaciente = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Burnout & Datos Fisiológicos por Paciente"),
+                        html.H4("Burnout & Datos Fisiológicos por Paciente"),
+                        html.P("En este apartado de datos categorizados, mostramos los datos por paciente respetando su privacidad."),
+                        html.P("Son datos detallados por lo que están pensados para personas expertas en el tema. Para que les sirva en posteriores estudios."),
                         dash_table.DataTable(
                             id='datatable-interactivity6',
                             columns=[

@@ -10,7 +10,12 @@ BurnoutXEstadoCivil = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Burnout por Estado Civil"),
+                        html.H4("Burnout por Estado Civil"),
+html.P(
+                            "En este apartado de datos categorizados, mostramos los datos filtrando por una de las variables importantes EstadoCivil"),
+                        html.P(
+                            "Son datos detallados por lo que están pensados para personas expertas en el tema. Para que les sirva en posteriores estudios."),
+
                         dash_table.DataTable(
                             id='datatable-interactivity15',
                             columns=[
@@ -51,7 +56,12 @@ BurnoutXContrato = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Burnout por Tipo de Contrato"),
+                        html.H4("Burnout por Tipo de Contrato"),
+html.P(
+                            "En este apartado de datos categorizados, mostramos los datos filtrando por una de las variables importantes Tipo de Contrato"),
+                        html.P(
+                            "Son datos detallados por lo que están pensados para personas expertas en el tema. Para que les sirva en posteriores estudios."),
+
                         dash_table.DataTable(
                             id='datatable-interactivity16',
                             columns=[
@@ -92,7 +102,12 @@ BurnoutXHijos = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Burnout por Número de Hijos"),
+                        html.H4("Burnout por Número de Hijos"),
+html.P(
+                            "En este apartado de datos categorizados, mostramos los datos filtrando por una de las variables importantes número de hijos"),
+                        html.P(
+                            "Son datos detallados por lo que están pensados para personas expertas en el tema. Para que les sirva en posteriores estudios."),
+
                         dash_table.DataTable(
                             id='datatable-interactivity17',
                             columns=[
@@ -133,7 +148,12 @@ BurnoutXEdad = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Burnout por Edad"),
+                        html.H4("Burnout por Edad"),
+html.P(
+                            "En este apartado de datos categorizados, mostramos los datos filtrando por una de las variables importantes Edad"),
+                        html.P(
+                            "Son datos detallados por lo que están pensados para personas expertas en el tema. Para que les sirva en posteriores estudios."),
+
                         dash_table.DataTable(
                             id='datatable-interactivity18',
                             columns=[

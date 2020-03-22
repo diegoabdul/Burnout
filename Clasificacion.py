@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pyspark.ml.classification import LogisticRegressionModel
 from pyspark.ml.classification import RandomForestClassificationModel
-from pyspark.ml.classification import GBTClassificationModel
+from pyspark.ml.classification import DecisionTreeClassificationModel
 from pyspark.ml.regression import IsotonicRegressionModel
 import os
 from pyspark.sql import SparkSession
@@ -37,6 +37,7 @@ def LinearEvaluation(data):
     #predictions=lrModel.transform(data)
     predictions = lrModel.transform(data) #VERDADERO = 0 Y FALSO 1
     prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
+    print(prediccion[0])
     if prediccion[0] == 1.0:
         prediccionLabel='FALSO'
     else:
@@ -49,6 +50,7 @@ def RandomForest(data):
     randomModel = RandomForestClassificationModel.load(path)
     predictions = randomModel.transform(data)
     prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
+    print(prediccion[0])
     if prediccion[0] == 1.0:
         prediccionLabel = 'FALSO'
     else:
@@ -56,12 +58,12 @@ def RandomForest(data):
 
     return prediccionLabel, prediccion[1][0] * 100
 
-def GradientTree(data):
-    path = 'modelo_GradientBoosted/modelGradientBoosted'
-    GradientModel = GBTClassificationModel.load(path)
-    predictions = GradientModel.transform(data)
-    predictions.select('prediction', 'probability').show()
+def DecisionTree(data):
+    path = 'modelo_DecisionTree/modelDecisionTree'
+    DecisionTree = DecisionTreeClassificationModel.load(path)
+    predictions = DecisionTree.transform(data)
     prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
+    print(prediccion[0])
     if prediccion[0] == 1.0:
         prediccionLabel = 'FALSO'
     else:
@@ -73,9 +75,8 @@ def Isotonic(data):
     path = 'modelo_IsotonicRegression/modelIsotonicRegression'
     GradientModel = IsotonicRegressionModel.load(path)
     predictions = GradientModel.transform(data)
-    predictions.show(truncate=False)
-    predictions.select('prediction').show()
     prediccion = predictions.select('prediction').rdd.flatMap(lambda x: x).collect()
+    print(prediccion[0])
     if prediccion[0] > 0.5:
         prediccionLabel = 'FALSO'
     else:

@@ -10,7 +10,11 @@ BurnoutXSexo = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Burnout por Sexo"),
+                        html.H4("Burnout por Sexo"),
+                        html.P("En este apartado de datos categorizados, la subcategoría de distinción por sexo"),
+                        html.P(
+                            "Son datos detallados por lo que están pensados para personas expertas en el tema. Para que les sirva en posteriores estudios."),
+
                         dash_table.DataTable(
                             id='datatable-interactivity5',
                             columns=[

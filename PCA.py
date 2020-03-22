@@ -10,7 +10,10 @@ PCA = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Análisis de los Componentes Principales"),
+                        html.H4("Análisis de los Componentes Principales"),
+                        html.P("En este apartado podemos observar las características en orden de importancia para optimizar la clasificación del Burnout, siendo el valor mas alto mas importante."),
+                        html.P("Podemos ver en el gráfico que las características mas importantes son las que tienen in índice mayor a 1. "),
+                        html.P("Por lo que estas son las variables tomadas para la construcción del modelo de predicción, asi como también para sub-categorías."),
                         dash_table.DataTable(
                             id='datatable-interactivity',
                             columns=[
