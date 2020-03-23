@@ -1898,17 +1898,33 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
         print(nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Hora_Gratificante,Horas_Activ_Fisica,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Estado_Animo)
         df = pd.DataFrame({'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)], 'Hijos': [float(hijos)], 'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica], 'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura], 'Hora_Gratificante': [float(Hora_Gratificante)], 'Horas_Activ_Fisica': [float(Horas_Activ_Fisica)], 'Calorias': [float(Calorias)], 'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)], 'Horas_Cuidados': [float(Horas_Cuidados)], 'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
         data=Clasificacion.DataPreparation(df)
-        prediccionLinear,probabilidadLinear=Clasificacion.LinearEvaluation(data)
+        #prediccionLinear,probabilidadLinear=Clasificacion.LinearEvaluation(data)
         prediccionRandom, probabilidadRandom = Clasificacion.RandomForest(data)
-        prediccionDecisionTreet,probabilidadDecisionTree = Clasificacion.DecisionTree(data)
-        prediccionIsotonic,labelIsotonic  = Clasificacion.Isotonic(data)
+        #prediccionDecisionTreet,probabilidadDecisionTree = Clasificacion.DecisionTree(data)
+        #prediccionIsotonic,labelIsotonic  = Clasificacion.Isotonic(data)
 
-        print(prediccionLinear + ' ' + str(probabilidadLinear) + ' Logistic Regresion')
-        print(prediccionRandom + ' ' + str(probabilidadRandom) + ' Random Forest ')
-        print(prediccionDecisionTreet + ' ' + str(probabilidadDecisionTree) + ' DecisionTree ')
-        print(labelIsotonic + ' Isotonic ')
+        # print(prediccionLinear + ' ' + str(probabilidadLinear) + ' Logistic Regresion')
+        # print(prediccionRandom + ' ' + str(probabilidadRandom) + ' Random Forest ')
+        # print(prediccionDecisionTreet + ' ' + str(probabilidadDecisionTree) + ' DecisionTree ')
+        # print(labelIsotonic + ' Isotonic ')
+        #
+        # if probabilidadLinear>probabilidadDecisionTree and probabilidadLinear>probabilidadRandom:
+        #     respuesta=prediccionLinear
+        # if probabilidadRandom>probabilidadLinear and probabilidadRandom>probabilidadDecisionTree:
+        #     respuesta=prediccionRandom
+        # if probabilidadDecisionTree>probabilidadRandom and probabilidadDecisionTree>probabilidadLinear:
+        #     respuesta=prediccionDecisionTreet
 
-    return '{} Tu evaluación es: {} '.format(nombre, prediccionDecisionTreet), "is_open"
+        if prediccionRandom=='VERDADERO':
+            salida='{} Tu evaluación es: {}  Te recomendamos que: '.format(nombre, prediccionRandom)
+            salida2='1. Date un paseo cada día al menos de 30’ (mejor en contacto con la naturaleza)'
+            salida3 = '2. Dedica al menos 10’ al día a practicar alguna técnica de meditación y/o relajación (como la observación de la respiración)'
+            salida4='3. Llama a algún amigo con quien no hayas contactado desde hace tiempo.'
+            salida5='4. Participa en algún grupo de “hobbies” externo al trabajo. '
+            prueba=html.Div(html.P([salida, html.Br(),html.Br(), salida2,html.Br(),html.Br(),salida3,html.Br(),html.Br(),salida4,html.Br(),html.Br(),salida5]))
+            return prueba, "is_open"
+        if prediccionRandom=='FALSO':
+            return 'Enhorabuena!! {} Tu evaluación es: {} !! Sigue así!!'.format(nombre, prediccionRandom), "is_open"
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pyspark.ml.classification import LogisticRegressionModel
 from pyspark.ml.classification import RandomForestClassificationModel
-from pyspark.ml.classification import GBTClassificationModel
+from pyspark.ml.classification import DecisionTreeClassificationModel
 from pyspark.ml.regression import IsotonicRegressionModel
 import os
 from pyspark.sql import SparkSession
@@ -55,16 +55,16 @@ def RandomForest(data):
 
     return prediccionLabel, prediccion[1][0] * 100
 
-def GradientTree(data):
-    path = 'modelo_GradientBoosted/modelGradientBoosted'
-    GradientModel = GBTClassificationModel.load(path)
-    predictions = GradientModel.transform(data)
-    predictions.select('prediction', 'probability').show()
+def DecisionTree(data):
+    path = 'modelo_DecisionTree/modelDecisionTree'
+    DecisionTree = DecisionTreeClassificationModel.load(path)
+    predictions = DecisionTree.transform(data)
     prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
+    print(prediccion[0])
     if prediccion[0] == 1.0:
-       prediccionLabel = 'VERDADERO'
+        prediccionLabel = 'FALSO'
     else:
-       prediccionLabel = 'FALSO'
+        prediccionLabel = 'VERDADERO'
 
     return prediccionLabel, prediccion[1][0] * 100
 
@@ -85,13 +85,13 @@ def Isotonic(data):
 
 
 data=DataPreparation()
-#prediccionLinear,probabilidadLineal=LinearEvaluation(data)
-#prediccionRandom,probabilidadForest=RandomForest(data)
-prediccionGradient,probabilidadGradient=GradientTree(data)
-#label=Isotonic(data)
-#print(label)
-#print(prediccionLinear + ' ' + str(probabilidadLineal) + ' Logistic Regresion')
-#print(prediccionRandom + ' ' + str(probabilidadForest) + ' Random Forest ')
-print(prediccionGradient + ' ' + str(probabilidadGradient) + ' Gradient ')
+prediccionLinear,probabilidadLineal=LinearEvaluation(data)
+prediccionRandom,probabilidadForest=RandomForest(data)
+prediccionGradient,probabilidadGradient=DecisionTree(data)
+label=Isotonic(data)
+print(label)
+print(prediccionLinear + ' ' + str(probabilidadLineal) + ' Logistic Regresion')
+print(prediccionRandom + ' ' + str(probabilidadForest) + ' Random Forest ')
+print(prediccionGradient + ' ' + str(probabilidadGradient) + ' DecisionTree ')
 
 

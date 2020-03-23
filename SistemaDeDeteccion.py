@@ -58,7 +58,7 @@ def LogisticRegression(train,test):
 
 def RandomForest(train,test):
     from pyspark.ml.classification import RandomForestClassifier
-    rf = RandomForestClassifier(featuresCol='features', labelCol='label',numTrees=100000,featureSubsetStrategy="auto")
+    rf = RandomForestClassifier(featuresCol='features', labelCol='label',numTrees=1000,featureSubsetStrategy="auto")
     rfModel = rf.fit(train)
     path = 'modelo_RandomForest'
     os.mkdir(path)
