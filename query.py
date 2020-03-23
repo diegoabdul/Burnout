@@ -5,6 +5,8 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:\\Users\diego\Documents\Burnout\
 project='burnout-258011'
 credentials,project = google.auth.default(scopes=['https://www.googleapis.com/auth/drive','https://www.googleapis.com/auth/bigquery',])
 
+def insert(usuarios):
+    usuarios.to_gbq("burnout.Usuarios",project_id=project, chunksize=None, if_exists='append', verbose=False)
 
 queryDatosFisiologicos = ('SELECT Burnout_Antes as Burnout,avg(Calorias) as Calorias, avg(Frecuencia_Cardiaca_Minuto) as Frecuencia_Cardiaca_Minuto ,avg(Resting_HeartRate) as Resting_HeartRate,avg(Eficiencia_Sueno) as Eficiencia_Sueno, avg(Peso) as Peso,avg(Hijos) as Hijos,avg(Tiempo_PlazaActual) as Tiempo_Plaza,avg( Tiempo_Vida_Laboral) as Tiempo_Vida_Laboral,avg(Max_HeartRate)as Max_HeartRate,avg( Min_HeartRate) as Min_HeartRate,avg( Duracion_Sueno ) as Duracion_Sueno,avg( Minutos_Rem ) as Minutos_Rem ,avg( Cantidad_Sueno_Profundo) as SuenoProfundo,avg( Minutos_Sueno_Profundo)as Min_SuenoProfundo,avg( Minutos_Sueno_Ligero) as Min_SuenoLigero, avg (Minutos_Sueno_Wake) as Minutos_SuenoDespierto, avg( Minutos_Dormido) as Min_Dormido, avg( Minutos_Despierto_enCama) Min_Despierto_enCama, avg( Tiempo_enCama) as Tiempo_enCama FROM `burnout-258011.burnout.burnout_Data` group by Burnout_Antes')
 df_DatosFisiologicos = pd.read_gbq(queryDatosFisiologicos, project_id=project, dialect='standard')
@@ -46,3 +48,4 @@ df_Hijos = pd.read_gbq(queryporHijos, project_id=project, dialect='standard')
 
 queryporEdad = ('SELECT Edad,avg(Calorias) as Calorias, avg(Frecuencia_Cardiaca_Minuto) as Frecuencia_Cardiaca_Minuto ,avg(Resting_HeartRate) as Resting_HeartRate,avg(Eficiencia_Sueno) as Eficiencia_Sueno, avg(Peso) as Peso,avg(Hijos) as Hijos,avg(Tiempo_PlazaActual) as Tiempo_Plaza,avg( Tiempo_Vida_Laboral) as Tiempo_Vida_Laboral,avg(Max_HeartRate)as Max_HeartRate,avg( Min_HeartRate) as Min_HeartRate,avg( Minutos_Rem ) as Minutos_Rem ,avg( Cantidad_Sueno_Profundo) as SuenoProfundo,avg( Minutos_Sueno_Profundo)as Min_SuenoProfundo,avg( Minutos_Sueno_Ligero) as Min_SuenoLigero, avg (Minutos_Sueno_Wake) as Minutos_SuenoDespierto, avg( Minutos_Dormido) as Min_Dormido, avg( Minutos_Despierto_enCama) Min_Despierto_enCama, avg( Tiempo_enCama) as Tiempo_enCama, avg( Cansancio_Emocional) as Cansancio_Emocional,avg( Despersonalizacion) as Despersonalizacion, avg( Realizacion_Personal) as Realizacion_Personal  FROM `burnout-258011.burnout.burnout_Data` group by Edad')
 df_Edad = pd.read_gbq(queryporEdad, project_id=project, dialect='standard')
+

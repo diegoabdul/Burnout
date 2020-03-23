@@ -1896,6 +1896,7 @@ def check_edad(edad):
 def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Hora_Gratificante,Horas_Activ_Fisica,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Estado_Animo):
     if clicks is not None:
         print(nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Hora_Gratificante,Horas_Activ_Fisica,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Estado_Animo)
+
         df = pd.DataFrame({'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)], 'Hijos': [float(hijos)], 'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica], 'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura], 'Hora_Gratificante': [float(Hora_Gratificante)], 'Horas_Activ_Fisica': [float(Horas_Activ_Fisica)], 'Calorias': [float(Calorias)], 'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)], 'Horas_Cuidados': [float(Horas_Cuidados)], 'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
         data=Clasificacion.DataPreparation(df)
         #prediccionLinear,probabilidadLinear=Clasificacion.LinearEvaluation(data)
@@ -1914,7 +1915,18 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
         #     respuesta=prediccionRandom
         # if probabilidadDecisionTree>probabilidadRandom and probabilidadDecisionTree>probabilidadLinear:
         #     respuesta=prediccionDecisionTreet
+        usuarios = pd.DataFrame(
+            {'Nombre': [nombre], 'Email': Email, 'Prediccion':[prediccionRandom], 'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)],
+             'Hijos': [float(hijos)],
+             'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica],
+             'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura],
+             'Hora_Gratificante': [float(Hora_Gratificante)],
+             'Horas_Activ_Fisica': [float(Horas_Activ_Fisica)], 'Calorias': [float(Calorias)],
+             'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)],
+             'Horas_Cuidados': [float(Horas_Cuidados)],
+             'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
 
+        query.insert(usuarios)
         if prediccionRandom=='VERDADERO':
             salida='{} Tu evaluación es: {}  Te recomendamos que: '.format(nombre, prediccionRandom)
             salida2='1. Date un paseo cada día al menos de 30’ (mejor en contacto con la naturaleza)'
