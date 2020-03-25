@@ -8,13 +8,12 @@ SistemaDeDeteccion = dbc.Container(
     [dbc.Modal(
             [
                 dbc.ModalHeader("Tu Evaluación"),
-                #html.Div(id='output_div'),
                 dbc.ModalBody(html.Div(id='output_div')),
                 dbc.ModalFooter('Click fuera de este recuadro para salir'),
             ],
             id="modal",
         ),
-    ]
+    ],
 ),
         dbc.Row(
             [
@@ -57,10 +56,10 @@ SistemaDeDeteccion = dbc.Container(
 
                                 dbc.Label("Contrato de Trabajo Actual", html_for="dropdown"), #Contrato_Adjunto
                                 dcc.Dropdown(id="Contrato_Adjunto",options=[
-                                        {"label": "fijo", "value": 1},
-                                        {"label": "eventual", "value": 2},
-                                        {"label": "interino", "value": 3},
-                                        {"label": "N/A", "value": 4},
+                                        {"label": "fijo", "value": 'fijo'},
+                                        {"label": "eventual", "value": 'eventual'},
+                                        {"label": "interino", "value": 'interino'},
+                                        {"label": "N/A", "value": 'N/A'},
                                     ],
                                 ),
 
@@ -124,6 +123,18 @@ SistemaDeDeteccion = dbc.Container(
                                     {"label": "Normal", "value": "normal"},
                                     {"label": "N/A", "value": "null"},
                                 ],
+                                ),
+                                html.Br(),
+                                html.Div(
+                                    [
+                                        dbc.Alert(
+                                            "Tu evaluación esta en curso, por favor espera, ¡No actualice la página!",
+                                            id="alert-fade",
+                                            dismissable=True,
+                                            is_open=False,
+                                        ),
+
+                                    ]
                                 ),
                                 html.Br(),
                                 dbc.Button("Ver Evaluación",id='submit-button', color="primary", className="mr-1"),

@@ -1,10 +1,12 @@
 import re
 import dash
+import time
 from dash.dependencies import Input, Output,State
 import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+from dash.exceptions import PreventUpdate
 import query
 import pandas as pd
 import Clasificacion
@@ -1883,6 +1885,15 @@ def check_edad(edad):
         return is_gmail, not is_gmail
     return False, False
 
+@app.callback(
+    Output("loading-output", "children"), [Input("loading-button", "n_clicks")]
+)
+def load_output(n):
+    if n:
+        time.sleep(1)
+        return f"Output loaded {n} times"
+    return "Output not reloaded yet"
+
 @app.callback([Output('output_div', 'children'),Output("modal", "is_open")],
                   [Input('submit-button', 'n_clicks')],
                   [State('nombre', 'value'),State('email-input', 'value'),State('Sexo', 'value'),State('edad', 'value'),State('peso', 'value'),
@@ -1894,50 +1905,61 @@ def check_edad(edad):
               )
 
 def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Hora_Gratificante,Horas_Activ_Fisica,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Estado_Animo):
-    if clicks is not None:
-        print(nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Hora_Gratificante,Horas_Activ_Fisica,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Estado_Animo)
 
-        df = pd.DataFrame({'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)], 'Hijos': [float(hijos)], 'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica], 'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura], 'Hora_Gratificante': [float(Hora_Gratificante)], 'Horas_Activ_Fisica': [float(Horas_Activ_Fisica)], 'Calorias': [float(Calorias)], 'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)], 'Horas_Cuidados': [float(Horas_Cuidados)], 'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
-        data=Clasificacion.DataPreparation(df)
-        #prediccionLinear,probabilidadLinear=Clasificacion.LinearEvaluation(data)
-        prediccionRandom, probabilidadRandom = Clasificacion.RandomForest(data)
-        #prediccionDecisionTreet,probabilidadDecisionTree = Clasificacion.DecisionTree(data)
-        #prediccionIsotonic,labelIsotonic  = Clasificacion.Isotonic(data)
+    print(nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_Adjunto,Musica,Estudio,Sales_Social,Lectura,Hora_Gratificante,Horas_Activ_Fisica,Calorias,Tiempo_PlazaActual,Hora_Social,Horas_Cuidados,Tiempo_Vida_Laboral,Estado_Animo)
 
-        # print(prediccionLinear + ' ' + str(probabilidadLinear) + ' Logistic Regresion')
-        # print(prediccionRandom + ' ' + str(probabilidadRandom) + ' Random Forest ')
-        # print(prediccionDecisionTreet + ' ' + str(probabilidadDecisionTree) + ' DecisionTree ')
-        # print(labelIsotonic + ' Isotonic ')
-        #
-        # if probabilidadLinear>probabilidadDecisionTree and probabilidadLinear>probabilidadRandom:
-        #     respuesta=prediccionLinear
-        # if probabilidadRandom>probabilidadLinear and probabilidadRandom>probabilidadDecisionTree:
-        #     respuesta=prediccionRandom
-        # if probabilidadDecisionTree>probabilidadRandom and probabilidadDecisionTree>probabilidadLinear:
-        #     respuesta=prediccionDecisionTreet
-        usuarios = pd.DataFrame(
-            {'Nombre': [nombre], 'Email': Email, 'Prediccion':[prediccionRandom], 'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)],
-             'Hijos': [float(hijos)],
-             'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica],
-             'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura],
-             'Hora_Gratificante': [float(Hora_Gratificante)],
-             'Horas_Activ_Fisica': [float(Horas_Activ_Fisica)], 'Calorias': [float(Calorias)],
-             'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)],
-             'Horas_Cuidados': [float(Horas_Cuidados)],
-             'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
+    df = pd.DataFrame({'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)], 'Hijos': [float(hijos)], 'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica], 'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura], 'Hora_Gratificante': [float(Hora_Gratificante)], 'Horas_Activ_Fisica': [float(Horas_Activ_Fisica)], 'Calorias': [float(Calorias)], 'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)], 'Horas_Cuidados': [float(Horas_Cuidados)], 'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
+    data=Clasificacion.DataPreparation(df)
+    #prediccionLinear,probabilidadLinear=Clasificacion.LinearEvaluation(data)
+    prediccionRandom, probabilidadRandom = Clasificacion.RandomForest(data)
+    #prediccionDecisionTreet,probabilidadDecisionTree = Clasificacion.DecisionTree(data)
+    #prediccionIsotonic,labelIsotonic  = Clasificacion.Isotonic(data)
 
-        query.insert(usuarios)
-        if prediccionRandom=='VERDADERO':
-            salida='{} Tu evaluación es: {}  Te recomendamos que: '.format(nombre, prediccionRandom)
-            salida2='1. Date un paseo cada día al menos de 30’ (mejor en contacto con la naturaleza)'
-            salida3 = '2. Dedica al menos 10’ al día a practicar alguna técnica de meditación y/o relajación (como la observación de la respiración)'
-            salida4='3. Llama a algún amigo con quien no hayas contactado desde hace tiempo.'
-            salida5='4. Participa en algún grupo de “hobbies” externo al trabajo. '
-            prueba=html.Div(html.P([salida, html.Br(),html.Br(), salida2,html.Br(),html.Br(),salida3,html.Br(),html.Br(),salida4,html.Br(),html.Br(),salida5]))
-            return prueba, "is_open"
-        if prediccionRandom=='FALSO':
-            return 'Enhorabuena!! {} Tu evaluación es: {} !! Sigue así!!'.format(nombre, prediccionRandom), "is_open"
+    # print(prediccionLinear + ' ' + str(probabilidadLinear) + ' Logistic Regresion')
+    # print(prediccionRandom + ' ' + str(probabilidadRandom) + ' Random Forest ')
+    # print(prediccionDecisionTreet + ' ' + str(probabilidadDecisionTree) + ' DecisionTree ')
+    # print(labelIsotonic + ' Isotonic ')
+    #
+    # if probabilidadLinear>probabilidadDecisionTree and probabilidadLinear>probabilidadRandom:
+    #     respuesta=prediccionLinear
+    # if probabilidadRandom>probabilidadLinear and probabilidadRandom>probabilidadDecisionTree:
+    #     respuesta=prediccionRandom
+    # if probabilidadDecisionTree>probabilidadRandom and probabilidadDecisionTree>probabilidadLinear:
+    #     respuesta=prediccionDecisionTreet
+    usuarios = pd.DataFrame(
+        {'Nombre': [nombre], 'Email': Email, 'Prediccion':[prediccionRandom], 'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)],
+         'Hijos': [float(hijos)],
+         'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica],
+         'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura],
+         'Hora_Gratificante': [float(Hora_Gratificante)],
+         'Horas_Activ_Fisica': [float(Horas_Activ_Fisica)], 'Calorias': [float(Calorias)],
+         'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)],
+         'Horas_Cuidados': [float(Horas_Cuidados)],
+         'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
+
+    query.insert(usuarios)
+    if prediccionRandom=='VERDADERO':
+        salida='{} Tu evaluación es: {}  Te recomendamos que: '.format(nombre, prediccionRandom)
+        salida2='1. Date un paseo cada día al menos de 30’ (mejor en contacto con la naturaleza)'
+        salida3 = '2. Dedica al menos 10’ al día a practicar alguna técnica de meditación y/o relajación (como la observación de la respiración)'
+        salida4='3. Llama a algún amigo con quien no hayas contactado desde hace tiempo.'
+        salida5='4. Participa en algún grupo de “hobbies” externo al trabajo. '
+        prueba=html.Div(html.P([salida, html.Br(),html.Br(), salida2,html.Br(),html.Br(),salida3,html.Br(),html.Br(),salida4,html.Br(),html.Br(),salida5]))
+        return prueba, "is_open"
+    if prediccionRandom=='FALSO':
+        return 'Enhorabuena!! {} Tu evaluación es: {} !! Sigue así!!'.format(nombre, prediccionRandom), "is_open"
+
+@app.callback(
+    Output("alert-fade", "is_open"),
+    [Input("submit-button", "n_clicks")],
+    [State("alert-fade", "is_open")],
+)
+def toggle_alert(n, is_open):
+    if n != 1:
+        raise PreventUpdate
+    else:
+        return not is_open
 
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', port=80)
+    app.run_server(host='0.0.0.0', port=80,ssl_context='adhoc')
