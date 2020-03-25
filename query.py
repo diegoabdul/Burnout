@@ -1,7 +1,8 @@
 import pandas as pd
 import google.auth
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:\\Users\diego\Documents\Burnout\Burnout\\burnout-c831a7220a8d.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:\\Users\diegoabdulmassih\Desktop\Burnout\\burnout-c831a7220a8d.json"
+#os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:\\Users\diego\Documents\Burnout\Burnout\\burnout-c831a7220a8d.json"
 project='burnout-258011'
 credentials,project = google.auth.default(scopes=['https://www.googleapis.com/auth/drive','https://www.googleapis.com/auth/bigquery',])
 

@@ -40,11 +40,11 @@ SistemaDeDeteccion = dbc.Container(
                                     width=10,
                                 ),
                                 dbc.Label("Edad"),
-                                dbc.Input(id="edad", type="number", value=""),
+                                dbc.Input(id="edad", type="number", value="",min=0, max=100),
                                 dbc.Label("Peso en Kilos"),
-                                dbc.Input(id="peso", type="number", value=""),
+                                dbc.Input(id="peso", type="number", value="",min=0, max=300),
                                 dbc.Label("Numero de Hijos"),
-                                dbc.Input(id="hijos", type="number", value=""),
+                                dbc.Input(id="hijos", type="number", value="",min=0, max=100),
 
                                 dbc.Label("Estado Civil", html_for="dropdown"), #EstadoCivil
                                 dcc.Dropdown(id="EstadoCivil",options=[
@@ -96,25 +96,25 @@ SistemaDeDeteccion = dbc.Container(
                                 ),
 
                                 html.P('¿Cuántas horas dedicas al mes en actividades que te hagan feliz como un pasatiempo?'),
-                                dbc.Input(id="Hora_Gratificante", type="number", value=""),
+                                dbc.Input(id="Hora_Gratificante", type="number", value="",min=0, max=400),
 
                                 html.P('¿Cuántas horas dedicas al mes haciendo ejercicio o algún deporte?'),
-                                dbc.Input(id="Horas_Activ_Fisica", type="number", value=""),
+                                dbc.Input(id="Horas_Activ_Fisica", type="number", value="",min=0, max=400),
 
                                 html.P('¿Cuántas calorías quemas al día? -  La estimación es entre 400 - 600 Kcal en reposo'),
-                                dbc.Input(id="Calorias", type="number", value=""),
+                                dbc.Input(id="Calorias", type="number", value="",min=0, max=400),
 
                                 html.P('¿Cuatos años llevas en la empresa que trabajas actualmente?'),
-                                dbc.Input(id="Tiempo_PlazaActual", type="number", value=""),
+                                dbc.Input(id="Tiempo_PlazaActual", type="number", value="",min=0, max=400),
 
                                 html.P('¿Cuantas horas dedicas a salidas sociales en el mes?'),
-                                dbc.Input(id="Hora_Social", type="number", value=""),
+                                dbc.Input(id="Hora_Social", type="number", value="",min=0, max=400),
 
                                 html.P('¿Cuantas horas dedicas a cuidarte al mes?'),
-                                dbc.Input(id="Horas_Cuidados", type="number", value=""),
+                                dbc.Input(id="Horas_Cuidados", type="number", value="",min=0, max=400),
 
                                 html.P('¿Cuantos años llevas en general trabajando?'),
-                                dbc.Input(id="Tiempo_Vida_Laboral", type="number", value=""),
+                                dbc.Input(id="Tiempo_Vida_Laboral", type="number", value="",min=0, max=400),
 
                                 html.P('¿Como dirías que es tu estado de ánimo?'),
                                 dcc.Dropdown(id="Estado_Animo", options=[
