@@ -110,7 +110,7 @@ SistemaDeDeteccion = dbc.Container(
                                 html.P('¿Cuantas horas dedicas a salidas sociales en el mes?'),
                                 dbc.Input(id="Hora_Social", type="number", value=""),
 
-                                html.P('¿Cuantas horas dedicas a cuidarte?'),
+                                html.P('¿Cuantas horas dedicas a cuidarte al mes?'),
                                 dbc.Input(id="Horas_Cuidados", type="number", value=""),
 
                                 html.P('¿Cuantos años llevas en general trabajando?'),
