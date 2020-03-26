@@ -1912,7 +1912,7 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
     data=Clasificacion.DataPreparation(df)
     #prediccionLinear,probabilidadLinear=Clasificacion.LinearEvaluation(data)
     prediccionRandom, probabilidadRandom = Clasificacion.RandomForest(data)
-    #prediccionDecisionTreet,probabilidadDecisionTree = Clasificacion.DecisionTree(data)
+    prediccionDecisionTreet,probabilidadDecisionTree = Clasificacion.DecisionTree(data)
     #prediccionIsotonic,labelIsotonic  = Clasificacion.Isotonic(data)
 
     # print(prediccionLinear + ' ' + str(probabilidadLinear) + ' Logistic Regresion')
@@ -1920,10 +1920,10 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
     # print(prediccionDecisionTreet + ' ' + str(probabilidadDecisionTree) + ' DecisionTree ')
     # print(labelIsotonic + ' Isotonic ')
     #
-    # if probabilidadLinear>probabilidadDecisionTree and probabilidadLinear>probabilidadRandom:
-    #     respuesta=prediccionLinear
-    # if probabilidadRandom>probabilidadLinear and probabilidadRandom>probabilidadDecisionTree:
-    #     respuesta=prediccionRandom
+    if probabilidadRandom>probabilidadDecisionTree:
+        respuesta=prediccionRandom
+    if probabilidadDecisionTree>probabilidadRandom:
+         respuesta=prediccionDecisionTreet
     # if probabilidadDecisionTree>probabilidadRandom and probabilidadDecisionTree>probabilidadLinear:
     #     respuesta=prediccionDecisionTreet
     id=query.contar()
@@ -1931,7 +1931,7 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
     print(val)
     val=val+1
     usuarios = pd.DataFrame(
-        {'ID': [val],'Nombre': [nombre], 'Email': Email, 'Prediccion':[prediccionRandom], 'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)],
+        {'ID': [val],'Nombre': [nombre], 'Email': Email, 'Prediccion':[respuesta], 'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)],
          'Hijos': [float(hijos)],
          'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica],
          'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura],
@@ -1942,7 +1942,7 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
          'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
     #usuarios.to_csv('usuarios.csv')
     query.insert(usuarios)
-    if prediccionRandom=='VERDADERO':
+    if respuesta=='VERDADERO':
         salida='{} Tu evaluación es: {}  Te recomendamos que: '.format(nombre, prediccionRandom)
         salida2='1. Date un paseo cada día al menos de 30’ (mejor en contacto con la naturaleza)'
         salida3 = '2. Dedica al menos 10’ al día a practicar alguna técnica de meditación y/o relajación (como la observación de la respiración)'
@@ -1950,7 +1950,7 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
         salida5='4. Participa en algún grupo de “hobbies” externo al trabajo. '
         prueba=html.Div(html.P([salida, html.Br(),html.Br(), salida2,html.Br(),html.Br(),salida3,html.Br(),html.Br(),salida4,html.Br(),html.Br(),salida5]))
         return prueba, "is_open"
-    if prediccionRandom=='FALSO':
+    if respuesta=='FALSO':
         return 'Enhorabuena!! {} Tu evaluación es: {} !! Sigue así!!'.format(nombre, prediccionRandom), "is_open"
 
 @app.callback(
