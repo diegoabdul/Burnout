@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.OneHotEncoderModel","timestamp":1584889698803,"sparkVersion":"2.4.5","uid":"OneHotEncoderEstimator_c2784e62e808","paramMap":{"inputCols":["EdadIndex"],"outputCols":["EdadclassVec"]},"defaultParamMap":{"dropLast":true,"handleInvalid":"error"}}

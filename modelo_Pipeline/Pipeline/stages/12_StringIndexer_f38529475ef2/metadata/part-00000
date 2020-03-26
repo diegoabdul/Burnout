@@ -1,1 +1,0 @@
-{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1584889699106,"sparkVersion":"2.4.5","uid":"StringIndexer_f38529475ef2","paramMap":{"inputCol":"Estado_Animo","handleInvalid":"keep","outputCol":"Estado_AnimoIndex"},"defaultParamMap":{"handleInvalid":"error","stringOrderType":"frequencyDesc","outputCol":"StringIndexer_f38529475ef2__output"}}
