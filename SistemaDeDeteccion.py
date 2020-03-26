@@ -44,7 +44,7 @@ def DataPreparation():
 
 def LogisticRegression(train,test):
     from pyspark.ml.classification import LogisticRegression
-    lr = LogisticRegression(featuresCol = 'features', labelCol = 'label', maxIter=100000,elasticNetParam=0.5,fitIntercept=True,threshold=0.5)
+    lr = LogisticRegression(featuresCol = 'features', labelCol = 'label', maxIter=100000,elasticNetParam=0.5,fitIntercept=False,threshold=0.5)
     lrModel = lr.fit(train)
     path = 'modelo_LogisticRegression'
     os.mkdir(path)
@@ -58,7 +58,7 @@ def LogisticRegression(train,test):
 
 def RandomForest(train,test):
     from pyspark.ml.classification import RandomForestClassifier
-    rf = RandomForestClassifier(featuresCol='features', labelCol='label',numTrees=1000,featureSubsetStrategy="auto")
+    rf = RandomForestClassifier(featuresCol='features', labelCol='label',numTrees=6000,featureSubsetStrategy="auto")
     rfModel = rf.fit(train)
     path = 'modelo_RandomForest'
     os.mkdir(path)
