@@ -1926,8 +1926,12 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
     #     respuesta=prediccionRandom
     # if probabilidadDecisionTree>probabilidadRandom and probabilidadDecisionTree>probabilidadLinear:
     #     respuesta=prediccionDecisionTreet
+    id=query.contar()
+    val = id['contar'].values[0]
+    print(val)
+    val=val+1
     usuarios = pd.DataFrame(
-        {'Nombre': [nombre], 'Email': Email, 'Prediccion':[prediccionRandom], 'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)],
+        {'ID': [val],'Nombre': [nombre], 'Email': Email, 'Prediccion':[prediccionRandom], 'Sexo': [Sexo], 'Edad': [Edad], 'Peso': [float(Peso)],
          'Hijos': [float(hijos)],
          'EstadoCivil': [EstadoCivil], 'Contrato_Adjunto': [Contrato_Adjunto], 'Musica': [Musica],
          'Estudias': [Estudio], 'Sales_Social': [Sales_Social], 'Lectura': [Lectura],
@@ -1936,7 +1940,7 @@ def update_output(clicks,nombre,Email,Sexo,Edad,Peso,hijos,EstadoCivil,Contrato_
          'Tiempo_PlazaActual': [float(Tiempo_PlazaActual)], 'Hora_Social': [float(Hora_Social)],
          'Horas_Cuidados': [float(Horas_Cuidados)],
          'Tiempo_Vida_Laboral': [float(Tiempo_Vida_Laboral)], 'Estado_Animo': [Estado_Animo]})
-
+    #usuarios.to_csv('usuarios.csv')
     query.insert(usuarios)
     if prediccionRandom=='VERDADERO':
         salida='{} Tu evaluación es: {}  Te recomendamos que: '.format(nombre, prediccionRandom)

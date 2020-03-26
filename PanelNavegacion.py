@@ -37,6 +37,7 @@ navbar = dbc.NavbarSimple(
     brand="Burnout Study",
     #brand_external_link='https://storage.cloud.google.com/burnout/Burnout.png'
     #src='data:image/png;base64,{}'.format(encoded_image),
+    #brand_href="https://burnoutweb.ddns.net:80",
     brand_href="http://burnoutweb.ddns.net:80",
     #brand_href="http://localhost:80/",
     sticky="top",

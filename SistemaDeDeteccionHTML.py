@@ -102,7 +102,7 @@ SistemaDeDeteccion = dbc.Container(
                                 dbc.Input(id="Horas_Activ_Fisica", type="number", value="",min=0, max=400),
 
                                 html.P('¿Cuántas calorías quemas al día? -  La estimación es entre 400 - 600 Kcal en reposo'),
-                                dbc.Input(id="Calorias", type="number", value="",min=0, max=400),
+                                dbc.Input(id="Calorias", type="number", value="",min=0, max=10000),
 
                                 html.P('¿Cuatos años llevas en la empresa que trabajas actualmente?'),
                                 dbc.Input(id="Tiempo_PlazaActual", type="number", value="",min=0, max=400),
