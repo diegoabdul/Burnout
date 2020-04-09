@@ -6,7 +6,7 @@ sc =SparkContext()
 sqlContext = SQLContext(sc)
 
 def DataPreparation():
-    spark = SparkSession.builder.appName('SistemaDeDeteccion').getOrCreate()
+    spark = SparkSession.builder.appName('SistemaDeDeteccion').master("local[*]").getOrCreate()
     data = spark.read.csv("/Burnout_Data.csv",header=True, inferSchema=True)
     data = data.select('Tiempo_PlazaActual','EstadoCivil','Burnout_Antes','Hora_Social','Horas_Cuidados','Calorias','Peso','Contrato_Adjunto','Musica','Sexo','Estudias','Sales_Social','Edad','Estado_Animo','Tiempo_Vida_Laboral','Hijos','Lectura','Hora_Gratificante','Horas_Activ_Fisica')
     cols = data.columns
@@ -31,9 +31,9 @@ def DataPreparation():
     pipeline = Pipeline(stages = stages)
     pipelineModel = pipeline.fit(data)
     data = pipelineModel.transform(data)
-    path = 'modelo_Pipeline'
-    os.mkdir(path)
-    pipelineModel.save(os.path.join(path, 'Pipeline'))
+    #path = 'modelo_Pipeline'
+    #os.mkdir(path)
+    #pipelineModel.save(os.path.join(path, 'Pipeline'))
     selectedCols = ['label', 'features'] + cols
     data = data.select(selectedCols)
 
@@ -44,61 +44,83 @@ def DataPreparation():
 
 def LogisticRegression(train,test):
     from pyspark.ml.classification import LogisticRegression
-    lr = LogisticRegression(featuresCol = 'features', labelCol = 'label', maxIter=100000,elasticNetParam=0.5,fitIntercept=False,threshold=0.5)
+    lr = LogisticRegression(featuresCol = 'features', labelCol = 'label', maxIter=100,elasticNetParam=0.5,fitIntercept=False,threshold=0.8)
     lrModel = lr.fit(train)
-    path = 'modelo_LogisticRegression'
-    os.mkdir(path)
-    lrModel.save(os.path.join(path, 'modelLogisticRegression'))
+
     predictions = lrModel.transform(test)
     predictions.select('Burnout_Antes', 'label', 'rawPrediction', 'prediction', 'probability').show(10)
-
     from pyspark.ml.evaluation import BinaryClassificationEvaluator
     evaluator = BinaryClassificationEvaluator()
     print('Test Area Under ROC', evaluator.evaluate(predictions))
 
+    from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
+    paramGrid = (ParamGridBuilder()
+                 .addGrid(lr.maxIter, [100, 500, 1000, 5000, 7000, 10000])
+                 .addGrid(lr.elasticNetParam, [0,0.2,0.3,0.4,0.5,0.7,0.8])
+                 .addGrid(lr.fitIntercept, [True, False])
+                 .addGrid(lr.threshold, [1,0.9,0.8])
+                 .build())
+    cv = CrossValidator(estimator=lr, estimatorParamMaps=paramGrid, evaluator=evaluator, numFolds=10)
+    cvModel = cv.fit(train)
+    path = 'modelo_LogisticRegression'
+    os.mkdir(path)
+    cvModel.save(os.path.join(path, 'modelLogisticRegression'))
+    predictions = cvModel.transform(test)
+    print('Test Area Under ROC', evaluator.evaluate(predictions))
+
 def RandomForest(train,test):
     from pyspark.ml.classification import RandomForestClassifier
-    rf = RandomForestClassifier(featuresCol='features', labelCol='label',numTrees=6000,featureSubsetStrategy="auto")
+    rf = RandomForestClassifier(featuresCol='features', labelCol='label',numTrees=500,featureSubsetStrategy="all")
     rfModel = rf.fit(train)
-    path = 'modelo_RandomForest'
-    os.mkdir(path)
-    rfModel.save(os.path.join(path, 'modelRandomForest'))
+
     predictions = rfModel.transform(test)
     predictions.select('Burnout_Antes', 'label', 'rawPrediction', 'prediction', 'probability').show(10)
 
     from pyspark.ml.evaluation import BinaryClassificationEvaluator
     evaluator = BinaryClassificationEvaluator()
     print('Test Area Under ROC', evaluator.evaluate(predictions))
+    from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
+    paramGrid = (ParamGridBuilder()
+                 .addGrid(rf.numTrees, [1000,2500,6000])
+                 .addGrid(rf.featureSubsetStrategy, ["all","auto", "sqrt","log2"])
+                 .build())
+    cv = CrossValidator(estimator=rf, estimatorParamMaps=paramGrid, evaluator=evaluator, numFolds=10)
+    cvModel = cv.fit(train)
+    path = 'modelo_RandomForest'
+    os.mkdir(path)
+    cvModel.save(os.path.join(path, 'modelRandomForest'))
+    predictions = cvModel.transform(test)
+    print('Test Area Under ROC', evaluator.evaluate(predictions))
 
 def DecisionTree(train,test):
     from pyspark.ml.classification import DecisionTreeClassifier
-    DecisionTree = DecisionTreeClassifier(featuresCol='features', labelCol='label',maxDepth=30,minInfoGain=0.4)
-    TreeModel = DecisionTree.fit(train)
-    path = 'modelo_DecisionTree'
-    os.mkdir(path)
-    TreeModel.save(os.path.join(path, 'modelDecisionTree'))
+    modelTree = DecisionTreeClassifier(featuresCol='features', labelCol='label',maxDepth=30,minInfoGain=0.4,maxBins=18)
+    TreeModel = modelTree.fit(train)
+
     predictions = TreeModel.transform(test)
     predictions.select('Burnout_Antes', 'label', 'rawPrediction', 'prediction', 'probability').show(10)
     from pyspark.ml.evaluation import BinaryClassificationEvaluator
     evaluator = BinaryClassificationEvaluator()
     print('Test Area Under ROC', evaluator.evaluate(predictions))
-
-def Isotonic(train,test):
-    from pyspark.ml.regression import IsotonicRegression
-    iso = IsotonicRegression(featuresCol='features', labelCol='label')
-    isoModel = iso.fit(train)
-    path = 'modelo_IsotonicRegression'
+    from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
+    paramGrid = (ParamGridBuilder()
+                 .addGrid(modelTree.maxDepth, [5, 15, 30])
+                 .addGrid(modelTree.minInfoGain, [0,0.4,0.8])
+                 .addGrid(modelTree.maxBins, [18, 20,10,5,2])
+                 .build())
+    cv = CrossValidator(estimator=modelTree, estimatorParamMaps=paramGrid, evaluator=evaluator, numFolds=10)
+    cvModel = cv.fit(train)
+    path = 'modelo_DecisionTree'
     os.mkdir(path)
-    isoModel.save(os.path.join(path, 'modelIsotonicRegression'))
-    predictions = isoModel.transform(test)
-    predictions.select('Burnout_Antes', 'label', 'prediction').show(10)
+    cvModel.save(os.path.join(path, 'modelDecisionTree'))
+    predictions = cvModel.transform(test)
+    print('Test Area Under ROC', evaluator.evaluate(predictions))
 
 
 train,test = DataPreparation()
-LogisticRegression(train,test)
+#LogisticRegression(train,test)
 RandomForest(train,test)
-DecisionTree(train,test)
-Isotonic(train,test)
+#DecisionTree(train,test)
 
 
 

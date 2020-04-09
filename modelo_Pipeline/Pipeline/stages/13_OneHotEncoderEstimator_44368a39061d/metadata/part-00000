@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.OneHotEncoderModel","timestamp":1585830364036,"sparkVersion":"2.4.5","uid":"OneHotEncoderEstimator_44368a39061d","paramMap":{"inputCols":["Estado_AnimoIndex"],"outputCols":["Estado_AnimoclassVec"]},"defaultParamMap":{"dropLast":true,"handleInvalid":"error"}}

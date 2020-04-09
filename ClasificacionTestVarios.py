@@ -4,6 +4,7 @@ from pyspark.ml.classification import LogisticRegressionModel
 from pyspark.ml.classification import RandomForestClassificationModel
 from pyspark.ml.classification import DecisionTreeClassificationModel
 from pyspark.ml.regression import IsotonicRegressionModel
+from pyspark.ml.tuning import CrossValidatorModel
 import os
 from pyspark.sql import SparkSession
 from pyspark.sql import SQLContext
@@ -30,7 +31,7 @@ def DataPreparation():
 
 def LinearEvaluation(data):
     path = 'modelo_LogisticRegression/modelLogisticRegression'
-    lrModel = LogisticRegressionModel.load(path)
+    lrModel = CrossValidatorModel.load(path)
     #print(lrModel.coefficientMatrix)
     #predictions=lrModel.transform(data)
     predictions = lrModel.transform(data) #VERDADERO = 0 Y FALSO 1
@@ -46,10 +47,11 @@ def LinearEvaluation(data):
 
 def RandomForest(data):
     path = 'modelo_RandomForest/modelRandomForest'
-    randomModel = RandomForestClassificationModel.load(path)
+    randomModel = CrossValidatorModel.load(path)
     predictions = randomModel.transform(data)
     print("RANDOM FOREST")
     predictions.select('Nombre','prediction','probability').show(truncate=False)
+    prediccion = predictions.select('Nombre','prediction', 'probability').rdd.flatMap(lambda x: x).collect()
     # prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
     # if prediccion[0] == 1.0:
     #     prediccionLabel = 'VERDADERO'
@@ -60,7 +62,7 @@ def RandomForest(data):
 
 def DecisionTree(data):
     path = 'modelo_DecisionTree/modelDecisionTree'
-    DecisionTree = DecisionTreeClassificationModel.load(path)
+    DecisionTree = CrossValidatorModel.load(path)
     predictions = DecisionTree.transform(data)
     print("DECISION TREE")
     predictions.select('Nombre','prediction','probability').show(truncate=False)
@@ -73,25 +75,13 @@ def DecisionTree(data):
     #
     # return prediccionLabel, prediccion[1][0] * 100
 
-def Isotonic(data):
-    path = 'modelo_IsotonicRegression/modelIsotonicRegression'
-    GradientModel = IsotonicRegressionModel.load(path)
-    predictions = GradientModel.transform(data)
-    predictions.show(truncate=False)
-    predictions.select('prediction').show()
-    prediccion = predictions.select('prediction').rdd.flatMap(lambda x: x).collect()
-    if prediccion[0] == 1.0:
-        prediccionLabel = 'VERDADERO'
-    else:
-        prediccionLabel = 'FALSO'
 
-    return prediccion[0]
 
 
 
 data=DataPreparation()
 LinearEvaluation(data)
-RandomForest(data)
+#RandomForest(data)
 DecisionTree(data)
 # #label=Isotonic(data)
 # #print(label)

@@ -1,0 +1,1 @@
+{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1585830355830,"sparkVersion":"2.4.5","uid":"StringIndexer_cf887cce990b","paramMap":{"outputCol":"Contrato_AdjuntoIndex","handleInvalid":"keep","inputCol":"Contrato_Adjunto"},"defaultParamMap":{"outputCol":"StringIndexer_cf887cce990b__output","handleInvalid":"error","stringOrderType":"frequencyDesc"}}
