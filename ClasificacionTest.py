@@ -33,8 +33,6 @@ def DataPreparation():
 def LinearEvaluation(data):
     path = 'modelo_LogisticRegression/modelLogisticRegression'
     lrModel = CrossValidatorModel.load(path)
-    #print(lrModel.coefficientMatrix)
-    #predictions=lrModel.transform(data)
     predictions = lrModel.transform(data) #VERDADERO = 0 Y FALSO 1
     prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
     if prediccion[0] == 1.0:

@@ -117,8 +117,8 @@ def update_graphs(rows, derived_virtual_selected_rows):
                 figure={
                    "data": [
                        {
-                           "x": dff["Importancia"],
-                           "y": dff["Caracteristicas"],
+                           "x": dff["Caracteristicas"],
+                           "y": dff["Importancia"],
                            'mode': 'markers',
                            'marker': {'size': 10}
                        }

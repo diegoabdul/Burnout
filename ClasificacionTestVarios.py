@@ -14,12 +14,12 @@ sqlContext = SQLContext(sc)
 
 def DataPreparation():
     spark = SparkSession.builder.appName('SistemaDeDeteccion').getOrCreate()
-    data = spark.read.csv("TestVivo.csv",header=True, inferSchema=True)
+    data = spark.read.csv("prueba.csv",header=True, inferSchema=True)
     #data = spark.createDataFrame(df)
     data = data.select('Tiempo_PlazaActual', 'EstadoCivil', 'Hora_Social', 'Horas_Cuidados',
                        'Calorias', 'Peso', 'Contrato_Adjunto', 'Musica', 'Sexo', 'Estudias', 'Sales_Social', 'Edad',
                        'Estado_Animo', 'Tiempo_Vida_Laboral', 'Hijos', 'Lectura', 'Hora_Gratificante',
-                       'Horas_Activ_Fisica','Nombre')
+                       'Horas_Activ_Fisica','Burnout_Antes','Email','Identificador')
     cols = data.columns
     from pyspark.ml import PipelineModel
     path = 'modelo_Pipeline/Pipeline'
@@ -36,7 +36,7 @@ def LinearEvaluation(data):
     #predictions=lrModel.transform(data)
     predictions = lrModel.transform(data) #VERDADERO = 0 Y FALSO 1
     print("LINEAR EVALUATION")
-    predictions.select('Nombre','prediction','probability').show(truncate=False)
+    predictions.select('Email','Identificador','Burnout_Antes','prediction','probability').show(truncate=False)
     # prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
     # if prediccion[0] == 1.0:
     #     prediccionLabel='VERDADERO'
@@ -47,11 +47,11 @@ def LinearEvaluation(data):
 
 def RandomForest(data):
     path = 'modelo_RandomForest/modelRandomForest'
-    randomModel = CrossValidatorModel.load(path)
+    randomModel = RandomForestClassificationModel.load(path)
     predictions = randomModel.transform(data)
     print("RANDOM FOREST")
-    predictions.select('Nombre','prediction','probability').show(truncate=False)
-    prediccion = predictions.select('Nombre','prediction', 'probability').rdd.flatMap(lambda x: x).collect()
+    predictions.select('Email','Identificador','Burnout_Antes','prediction','probability').show(truncate=False)
+    #prediccion = predictions.select('Nombre','prediction', 'probability').rdd.flatMap(lambda x: x).collect()
     # prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
     # if prediccion[0] == 1.0:
     #     prediccionLabel = 'VERDADERO'
@@ -65,7 +65,7 @@ def DecisionTree(data):
     DecisionTree = CrossValidatorModel.load(path)
     predictions = DecisionTree.transform(data)
     print("DECISION TREE")
-    predictions.select('Nombre','prediction','probability').show(truncate=False)
+    predictions.select('Email','Identificador','Burnout_Antes','prediction','probability').show(truncate=False)
     # prediccion = predictions.select('prediction', 'probability').rdd.flatMap(lambda x: x).collect()
     # print(prediccion[0])
     # if prediccion[0] == 1.0:
@@ -81,7 +81,7 @@ def DecisionTree(data):
 
 data=DataPreparation()
 LinearEvaluation(data)
-#RandomForest(data)
+RandomForest(data)
 DecisionTree(data)
 # #label=Isotonic(data)
 # #print(label)
